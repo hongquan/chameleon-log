@@ -1,27 +1,37 @@
 # Changelog
 
 
+## [1.1.0] - 2026-03-15
+
+### Added
+
+- Screenshot for `RichHandler` output.
+
+### Fixed
+
+- Padding of log level for `RichHandler`, matching `rich.logging.RichHandler` behavior.
+- Use new URL for screenshot.
+
+
 ## [1.0.0] - 2026-03-15
 
 ### Added
 
-- Initial release of ChameleonLog
-- RichHandler class providing colorful log output using the Rich library
-- Integration with Logbook for structured logging
-- Support for all Logbook log levels (DEBUG, INFO, NOTICE, WARNING, ERROR, CRITICAL)
-- Exception/traceback formatting with syntax highlighting
-- Example usage in examples/cli-app.py
+- `RichHandler` for colorful console output with syntax highlighting.
+- `JournaldHandler` for structured logging to systemd journal (Linux only).
+- `logbook-stubs` package.
+- Test cases.
 
 ### Changed
 
-- Updated project dependencies in pyproject.toml
-- Enhanced project metadata and documentation
+- Major rewrite from legacy codebase.
 
 
 ## [0.2.0] - 2020-10-16
 
-- Initial release
+- Legacy release (project was rewritten for v1.0.0)
 
 
+[1.1.0]: https://github.com/hongquan/chameleon-log/releases/tag/v1.1.0
 [1.0.0]: https://github.com/hongquan/chameleon-log/releases/tag/v1.0.0
 [0.2.0]: https://github.com/hongquan/chameleon-log/releases/tag/v0.2.0

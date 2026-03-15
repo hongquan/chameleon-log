@@ -108,30 +108,27 @@ Example Output
    :alt: Rich Handler Output
    :width: 100%
 
-.. code-block:: text
-
-    [12:00:00] INFO     MyApp: Application started successfully    cli-app.py:24
-               WARNING  MyApp: This is a warning message           cli-app.py:25
-               ERROR    MyApp: An error occurred                   cli-app.py:26
 
 JournaldHandler Usage
 ---------------------
 
 For systemd journal integration (Linux only) via journald, use ``JournaldHandler``. Logbook provides two ways to attach extra fields:
 
-**Simple logging output:**
+Simple logging output:
+~~~~~~~~~~~~~~~~~~~~~~
 
 .. image:: https://quan-images.b-cdn.net/blogs/2026/03/journald-simple.png
    :alt: Journald Simple Output
    :width: 100%
 
-**With extra fields for structured filtering:**
+With extra fields for structured filtering:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. image:: https://quan-images.b-cdn.net/blogs/2026/03/journald-extra-fields.png
    :alt: Journald Extra Fields Output
    :width: 100%
 
-**Option 1: Use the extra= parameter (simple and direct)**
+Option 1: Use the extra= parameter (simple and direct)
 
 .. code-block:: python
 
@@ -144,7 +141,7 @@ For systemd journal integration (Linux only) via journald, use ``JournaldHandler
         logger = logbook.Logger('MyApp')
         logger.info('User logged in', extra={'user_id': 123, 'action': 'login'})
 
-**Option 2: Use a Processor (for reusable context)**
+Option 2: Use a Processor (for reusable context)
 
 .. code-block:: python
 
