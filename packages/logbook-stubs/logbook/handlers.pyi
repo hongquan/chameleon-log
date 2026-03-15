@@ -1,0 +1,43 @@
+from typing import IO, TYPE_CHECKING, Callable, Literal, Self
+
+if TYPE_CHECKING:
+    from threading import RLock
+
+from _typeshed import Incomplete
+from logbook.base import LogRecord
+
+class Handler:
+    def emit(self, record: LogRecord) -> None: ...
+    def format(self, record: LogRecord) -> str: ...
+    def __enter__(self) -> Self: ...
+    def __exit__(self, exc_type: object, exc_value: object, tb: object) -> None: ...
+
+class Formatter:
+    def __call__(self, record: LogRecord, handler: Handler) -> str: ...
+
+class StringFormatterHandlerMixin: ...
+
+class StreamHandler(Handler, StringFormatterHandlerMixin):
+    stream: IO[str]
+    lock: RLock
+    def __init__(
+        self,
+        stream: Incomplete = ...,
+        level: int | str = 0,
+        format_string: str = '',
+        encoding: str | None = None,
+        filter: 'LogFilter | None' = None,
+        bubble: bool = False,
+    ) -> None: ...
+    def ensure_stream_is_open(self) -> None: ...
+    def encode(self, msg: str) -> str: ...
+    def write(self, item: str) -> None: ...
+    def should_flush(self) -> Literal[True]: ...
+    def flush(self) -> None: ...
+
+type LogFilter = Callable[[LogRecord, Handler], bool]
+
+class StderrHandler(StreamHandler):
+    def __init__(
+        self, level: int | str = 0, format_string: str = '', filter: LogFilter | None = None, bubble: bool = False
+    ) -> None: ...
