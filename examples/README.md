@@ -137,7 +137,3 @@ journalctl -t your-identifier F_FIELD_NAME=value
 # Follow logs in real-time
 journalctl -t your-identifier -f
 ```
-
-### Systemd Service Integration
-
-For production use, run your Python applications with journald logging as systemd services. See the structlog-journald examples for sample service files.

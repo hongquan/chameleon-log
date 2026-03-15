@@ -13,4 +13,5 @@ from logbook.base import (
     LoggerGroup as LoggerGroup,
     LogLevel as LogLevel,
     LogRecord as LogRecord,
+    Processor as Processor,
 )

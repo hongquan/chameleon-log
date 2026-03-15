@@ -14,7 +14,7 @@ dependencies = [
 ]
 dynamic = ["version"]
 keywords = ["logging", "logbook", "rich"]
-license = "Apache-2.0"
+license = { text = "Apache-2.0" }
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
@@ -27,13 +27,13 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 
-[project.urls]
-Repository = "https://github.com/hongquan/chameleon-log.git"
-
 [project.optional-dependencies]
 journald = [
   "systemd-python >= 235; sys_platform == 'linux'",
 ]
+
+[project.urls]
+Repository = "https://github.com/hongquan/chameleon-log.git"
 
 [build-system]
 requires = ["hatchling"]
@@ -44,6 +44,7 @@ test = [
     "logbook-stubs",
     "pytest>=9.0.2",
     "ty>=0.0.23",
+    "pytest-mock",
 ]
 lint = [
     "ruff>=0.15.6",
@@ -64,10 +65,10 @@ path = 'src/chameleon_log/__init__.py'
 
 # Ref: https://hatch.pypa.io/latest/how-to/environment/workspace/
 [tool.hatch.envs.default]
-workspace.members = ["packages/*"]
+workspace.members = ["packages/*", "packages/logbook-stubs"]
 
 [tool.uv.workspace]
-members = ['packages/*']
+members = ["packages/*", "packages/logbook-stubs"]
 
 [tool.uv.sources]
 logbook-stubs = { workspace = true }
@@ -108,9 +109,6 @@ lines-after-imports = 2
 [tool.ruff.format]
 quote-style = "single"
 
-[tool.ty.environment]
-extra-paths = ["packages/logbook-stubs"]
-
 [tool.mypy]
 disallow_any_generics = false
 disallow_incomplete_defs = true
@@ -118,10 +116,10 @@ disallow_untyped_decorators = true
 disallow_untyped_defs = true
 exclude = '''(?x)(
 |^build/
-|^dist/
-|^.venv/
-|^node_modules/
-|^migrations/
+||^dist/
+||^.venv/
+||^node_modules/
+||^migrations/
 )
 '''
 implicit_reexport = false
@@ -133,8 +131,5 @@ warn_unreachable = true
 warn_unused_configs = true
 warn_unused_ignores = true
 
-# [[tool.mypy.overrides]]
-# ignore_missing_imports = true
-# module = [
-#   "logbook.handlers",
-# ]
+[tool.ty.src]
+exclude = ["src/chameleon_log/legacy.py"]

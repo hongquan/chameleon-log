@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections import defaultdict
 from datetime import datetime
 from types import FrameType, TracebackType
-from typing import TYPE_CHECKING, Literal, TypeAlias
+from typing import TYPE_CHECKING, Callable, Literal, TypeAlias
 
 if TYPE_CHECKING:
     from logbook.handlers import Handler
@@ -162,3 +162,10 @@ class LoggerGroup:
     def add_logger(self, logger: Logger) -> None: ...
     def remove_logger(self, logger: Logger) -> None: ...
     def process_record(self, record: LogRecord) -> None: ...
+
+class Processor:
+    """A context manager that processes log records with a given function."""
+
+    def __init__(self, callback: Callable[[LogRecord], None]) -> None: ...
+    def __enter__(self) -> Processor: ...
+    def __exit__(self, exc_type: object, exc_value: object, tb: object) -> None: ...

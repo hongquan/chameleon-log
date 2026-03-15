@@ -10,16 +10,10 @@ from logbook import Processor
 from chameleon_log.journald import JournaldHandler
 
 
-def do_some_failed_action() -> None:
-    """Simulate an action that fails."""
-    msg = 'Something went wrong!'
-    raise ValueError(msg)
-
-
 def main() -> None:
     """Main function demonstrating JournaldHandler usage."""
     # Create a JournaldHandler
-    handler = JournaldHandler(syslog_identifier='chameleon-log-example')
+    handler = JournaldHandler(syslog_identifier='example-simple')
 
     with handler:
         # Get a logger
@@ -40,15 +34,27 @@ def main() -> None:
             extra={'linux': platform.freedesktop_os_release(), 'platform': platform.platform()},
         )
 
-        # Example 2: Use a Processor to inject context into multiple log calls
+        # Example 2: Cause an error by calling int('abc') and log the exception
+        try:
+            # This will raise a ValueError
+            int('abc')
+        except ValueError:
+            logger.exception('Failed to convert string to integer')
+
+        # Example 3: Use a Processor to inject context into multiple log calls
         def inject_error_context(record: logbook.LogRecord) -> None:
             """Inject error context into log records."""
             record.extra['error_type'] = 'conversion'
 
+        def get_optional_message() -> None:
+            """Return no message to demonstrate a None-related failure."""
+            return None
+
         # Log an exception with extra fields using a Processor
         try:
-            do_some_failed_action()
-        except ValueError:
+            # Another error example
+            get_optional_message().strip()  # type: ignore
+        except AttributeError:
             with Processor(inject_error_context):
                 logger.exception('An error occurred during processing')
 

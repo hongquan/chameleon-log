@@ -86,6 +86,11 @@ Uses `ty` for type checking.
 uv run ty check src/
 ```
 
+**Note**: Type checking requires a non-editable installation due to the workspace stub package. Install with:
+```bash
+uv sync --all-groups --all-extras -p 3.14 --no-editable
+```
+
 ### Testing
 
 Tests use the `ty` library (in test dependency group).

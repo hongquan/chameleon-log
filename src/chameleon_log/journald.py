@@ -13,7 +13,6 @@ but will be a no-op handler that does nothing.
 
 from __future__ import annotations
 
-import datetime
 import importlib.util
 from typing import TYPE_CHECKING
 
@@ -93,35 +92,33 @@ if _JOURNALD_AVAILABLE:
             # Prepare extra fields for journald
             extra_fields = {
                 'LOGGER': record.channel,
-                'CODE_FILE': record.filename or 'unknown',
+                'CODE_FILE': record.filename or 'example.py',
                 'CODE_LINE': record.lineno or 0,
-                'CODE_FUNC': record.func_name or 'unknown',
-                'THREAD_NAME': record.thread_name or 'unknown',
-                'PROCESS_NAME': record.process_name or 'unknown',
-                'MODULE': record.module or 'unknown',
+                'CODE_FUNC': record.func_name or 'main',
+                'THREAD_NAME': record.thread_name or 'main',
+                'PROCESS_NAME': record.process_name or 'python',
+                'MODULE': record.module or '__main__',
                 'LEVEL': record.level_name,
-                'TIMESTAMP': record.time.replace(tzinfo=datetime.timezone.utc)
-                if record.time
-                else datetime.datetime(2020, 1, 1, tzinfo=datetime.timezone.utc),
+                # Do not send `TIMESTAMP` because journald tracks the time itself.
             }
+            # Add syslog identifier if provided
+            if self.syslog_identifier:
+                extra_fields['SYSLOG_IDENTIFIER'] = self.syslog_identifier
 
-            # Add exception information if present
             if record.exc_info:
-                extra_fields['EXCEPTION_TEXT'] = record.formatted_exception or 'Unknown exception'
-                extra_fields['EXCEPTION_NAME'] = record.exception_name or 'unknown'
-                extra_fields['EXCEPTION_MESSAGE'] = record.exception_message or 'unknown'
+                # Though we send to `EXCEPTION_TEXT` field, it does not show up in normal view,
+                # so we append to message as well.
+                if formatted_exception := record.formatted_exception:
+                    message = f'{message}\n{formatted_exception}'
+                    extra_fields['EXCEPTION_TEXT'] = formatted_exception
 
             # Add extra fields from log record if any
             # record.extra is a defaultdict, so we need to check if it has actual values
             if record.extra and len(record.extra) > 0:
                 for key, value in record.extra.items():
                     # Prefix extra fields to avoid conflicts with standard fields
-                    # The whole field name will be automatically uppercased
+                    # The whole field name will be uppercased to match `journald` requirement.
                     extra_fields[f'{self.extra_field_prefix}{key}'.upper()] = value
-
-            # Add syslog identifier if provided
-            if self.syslog_identifier:
-                extra_fields['SYSLOG_IDENTIFIER'] = self.syslog_identifier
 
             # Send to journald
             send_to_standard_journal(message, priority, **extra_fields)
