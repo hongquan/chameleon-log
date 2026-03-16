@@ -1,5 +1,5 @@
-API Reference
-=============
+📚 API Reference
+=================
 
 .. automodule:: chameleon_log
    :members:

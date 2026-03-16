@@ -1,12 +1,11 @@
-Advanced Usage
-==============
+🛠️ Advanced Usage
+===================
 
-Installation with Optional Dependencies
----------------------------------------
+📦 Installation with Optional Dependencies
+===========================================
 
-JournaldHandler (Linux/systemd only)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+🐧 JournaldHandler
+~~~~~~~~~~~~~~~~~~~
 The :py:class:`~chameleon_log.journald.JournaldHandler` is only available when the ``journald`` extra is installed:
 
 .. code-block:: bash
@@ -19,32 +18,32 @@ The :py:class:`~chameleon_log.journald.JournaldHandler` is only available when t
 
     The ``journald`` extra requires Linux with systemd and installs the ``systemd-python`` package.
 
-JournaldHandler Advanced Features
-----------------------------------
+🐧 JournaldHandler Advanced Features
+====================================
 
 For applications deployed on Linux servers, writing logs directly to systemd `journald <https://wiki.archlinux.org/title/Systemd/Journal>`_ (rather than files or stdout) provides more efficient troubleshooting with filterable metadata.
 
 The ``JournaldHandler`` is not the same as writing logs to stdout/stderr and letting `journald <https://wiki.archlinux.org/title/Systemd/Journal>`_ collect them. The latter loses important metadata (timestamps, severity levels, extra fields) that enable powerful filtering.
 
-Complete Example with Extra Fields
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+🏗️ Complete Example with Extra Fields
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The following complete example demonstrates advanced ``JournaldHandler`` features including extra fields and exception handling:
 
 .. literalinclude:: ../examples/journald-simple.py
    :language: python
 
-Extra Fields for Structured Filtering
---------------------------------------
+🏗️ Extra Fields for Structured Filtering
+==========================================
 
 One advantage of `journald <https://wiki.archlinux.org/title/Systemd/Journal>`_ is the ability to attach structured data to log entries, enabling powerful filtering. This is especially useful in multi-tenant systems where logs from many tenants mix together.
 
-Two Approaches for Adding Extra Fields
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+🏗️ Two Approaches for Adding Extra Fields
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 `Logbook <https://pypi.org/project/Logbook/>`_ provides two ways to attach extra fields to log records:
 
-**Option 1: Use the ``extra=`` parameter (simple and direct)**
+*Option 1*: Use the ``extra=`` parameter (simple and direct)
 
 Best for adding fields to a single log call:
 
@@ -53,7 +52,7 @@ Best for adding fields to a single log call:
     logger.info('User action', extra={'user_id': 123, 'action': 'login'})
     # Results in fields: F_USER_ID=123, F_ACTION=login in `journald <https://wiki.archlinux.org/title/Systemd/Journal>`_
 
-**Option 2: Use a ``Processor`` (for reusable context)**
+*Option 2*: Use a ``Processor`` (for reusable context)
 
 Best for injecting context into multiple log calls:
 
@@ -70,16 +69,16 @@ Best for injecting context into multiple log calls:
         logger.info('Processing completed')
         # Both logs will have F_REQUEST_ID and F_USER_ID fields
 
-Example with Multiple Concurrent Sources
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+🏗️ Example with Multiple Concurrent Sources
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The following example demonstrates logging from multiple concurrent farms, each with its own context:
 
 .. literalinclude:: ../examples/journald-extra-fields.py
    :language: python
 
-RichHandler Configuration
--------------------------
+✨ RichHandler Configuration
+=================================
 
 The ``RichHandler`` can be customized for different use cases:
 
@@ -101,8 +100,8 @@ The ``RichHandler`` can be customized for different use cases:
 
 The handler supports all `Logbook <https://pypi.org/project/Logbook/>`_ log levels and provides formatted exception tracebacks with syntax highlighting.
 
-Automatic Handler Selection
----------------------------
+🤖 Automatic Handler Selection
+==============================
 
 For codebases that need to work in both development and production environments, you can automatically select the appropriate handler based on the runtime environment:
 
@@ -124,16 +123,16 @@ For codebases that need to work in both development and production environments,
 
 This allows the same codebase to work seamlessly in both environments without code changes.
 
-Complete Auto-Detection Example
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+🤖 Complete Auto-Detection Example
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 See ``examples/auto-detect-handler.py`` for a complete working example:
 
 .. literalinclude:: ../examples/auto-detect-handler.py
    :language: python
 
-Viewing Logs with journalctl
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+🐧 Viewing Logs with journalctl
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 When using ``JournaldHandler``, logs can be viewed and filtered using ``journalctl``:
 

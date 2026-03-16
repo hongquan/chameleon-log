@@ -1,10 +1,10 @@
-ChameleonLog Documentation
-==========================
+🦎 ChameleonLog Documentation
+==============================
 
 ChameleonLog provides colorful, structured logging for Python applications using the `Logbook`_ framework.
 
-Features
---------
+🌟 Features
+============
 
 - **RichHandler**: Beautiful console output with syntax highlighting and tracebacks using the `Rich`_ library
 - **JournaldHandler**: Structured logging to `systemd`_ `journald`_ with automatic level-based coloring and filtering
@@ -14,8 +14,8 @@ Features
 .. _systemd: https://systemd.io/
 .. _journald: https://systemd.io/
 
-Installation
-------------
+📦 Installation
+================
 
 Install ChameleonLog using ``pip``:
 
@@ -29,8 +29,8 @@ Or using ``uv``:
 
     uv add chameleon_log
 
-Optional Dependencies
-~~~~~~~~~~~~~~~~~~~~~
+🔧 Optional Dependencies
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To use the ``JournaldHandler`` for sending logs to systemd journald (Linux only):
 
@@ -48,8 +48,8 @@ This will also install the `systemd-python`_ package, requiring systemd-based Li
 
 .. _systemd-python: https://pypi.org/project/systemd-python/
 
-Contents
---------
+📂 Contents
+============
 
 .. toctree::
    :maxdepth: 2
@@ -59,8 +59,8 @@ Contents
    advanced
    api-ref
 
-Examples
---------
+🧪 Examples
+============
 
 Example code is available in the ``examples/`` directory:
 
@@ -69,8 +69,8 @@ Example code is available in the ``examples/`` directory:
 - ``journald-extra-fields.py`` - Advanced JournaldHandler with structured fields
 - ``auto-detect-handler.py`` - Automatic handler selection based on environment
 
-License
--------
+📄 License
+============
 
 This project is licensed under the Apache License 2.0.
 

@@ -1,15 +1,15 @@
-Simple Usage
-============
+💡 Simple Usage
+=================
 
 ChameleonLog provides two handlers for different environments: :py:class:`~chameleon_log.RichHandler` for colorful console output during development, and :py:class:`~chameleon_log.journald.JournaldHandler` for structured logging to `systemd <https://systemd.io/>`_ `journald <https://wiki.archlinux.org/title/Systemd/Journal>`_ in production.
 
-RichHandler
------------
+✨ RichHandler
+================
 
 The :py:class:`~chameleon_log.RichHandler` provides beautiful console output with syntax highlighting and formatted tracebacks for **development**.
 
-Basic Usage
-~~~~~~~~~~~
+🎬 Basic Usage
+~~~~~~~~~~~~~~~~~
 
 .. code-block:: python
 
@@ -28,23 +28,23 @@ Basic Usage
 
 This will produce colorful, formatted output in your terminal with proper log levels and structured tracebacks.
 
-Output
-~~~~~~
+🖼️ Output
+~~~~~~~~~~~
 
 .. image:: https://quan-images.b-cdn.net/blogs/2026/03/rich.png
    :alt: Rich Handler Output
    :width: 100%
 
-Complete Example
-~~~~~~~~~~~~~~~~
+📝 Complete Example
+~~~~~~~~~~~~~~~~~~~~~
 
 For a more complete example showing all log levels and features, see ``examples/cli-app.py``:
 
 .. literalinclude:: ../examples/cli-app.py
    :language: python
 
-JournaldHandler
----------------
+🐧 JournaldHandler
+===================
 
 .. note::
 
@@ -52,8 +52,8 @@ JournaldHandler
 
 The :py:class:`~chameleon_log.journald.JournaldHandler` writes logs directly to `systemd <https://systemd.io/>`_ `journald <https://wiki.archlinux.org/title/Systemd/Journal>`_ for **production/live systems**, with full metadata preservation.
 
-Basic Usage
-~~~~~~~~~~~
+🎬 Basic Usage
+~~~~~~~~~~~~~~~~~
 
 Basic ``JournaldHandler`` usage without extra parameters:
 
@@ -78,8 +78,8 @@ View logs with ``journalctl``:
     journalctl -u my-service  # Or by `systemd <https://systemd.io/>`_ unit name
     journalctl -t my-app  # Filter by syslog identifier
 
-Simple Example
-~~~~~~~~~~~~~~
+📝 Simple Example
+~~~~~~~~~~~~~~~~~~~
 
 See ``examples/journald-simple.py`` for a complete basic example with exception handling:
 
