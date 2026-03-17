@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.1.2] - 2026-03-17
+
+### Fixed
+
+- Reduce repepeated text in documentation.
+
+
 ## [1.1.1] - 2026-03-16
 
 ### Fixed
@@ -39,6 +46,7 @@
 - Legacy release (project was rewritten for v1.0.0)
 
 
+[1.1.2]: https://github.com/hongquan/chameleon-log/releases/tag/v1.1.2
 [1.1.1]: https://github.com/hongquan/chameleon-log/releases/tag/v1.1.1
 [1.1.0]: https://github.com/hongquan/chameleon-log/releases/tag/v1.1.0
 [1.0.0]: https://github.com/hongquan/chameleon-log/releases/tag/v1.0.0
