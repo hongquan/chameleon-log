@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [1.1.3] - 2026-03-25
+
+### Fixed
+
+- Import error for types in `legacy` module.
+
+
 ## [1.1.2] - 2026-03-17
 
 ### Fixed
@@ -46,6 +53,7 @@
 - Legacy release (project was rewritten for v1.0.0)
 
 
+[1.1.3]: https://github.com/hongquan/chameleon-log/releases/tag/v1.1.3
 [1.1.2]: https://github.com/hongquan/chameleon-log/releases/tag/v1.1.2
 [1.1.1]: https://github.com/hongquan/chameleon-log/releases/tag/v1.1.1
 [1.1.0]: https://github.com/hongquan/chameleon-log/releases/tag/v1.1.0

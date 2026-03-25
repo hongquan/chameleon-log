@@ -1,10 +1,15 @@
+from __future__ import annotations
+
 import logging
-from typing import Dict, Optional
+from typing import TYPE_CHECKING
 
 import logbook
 from logbook import LogRecord
 from logbook.compat import LoggingHandler as _LoggingHandler
-from logbook.handlers import LogFilter
+
+
+if TYPE_CHECKING:
+    from logbook.handlers import LogFilter
 
 
 class StdLoggingHandler(_LoggingHandler):
@@ -16,15 +21,15 @@ class StdLoggingHandler(_LoggingHandler):
 
     def __init__(
         self,
-        logger: Optional[logging.Logger] = None,
+        logger: logging.Logger | None = None,
         level: int = logbook.NOTSET,
-        filter: Optional[LogFilter] = None,
+        filter: LogFilter | None = None,
         bubble: bool = False,
     ) -> None:
         super().__init__(logger, level, filter, bubble)
-        self.sublogs: Dict[str, logging.Handler] = {}
+        self.sublogs: dict[str, logging.Logger] = {}
 
-    def get_logger(self, record: LogRecord) -> logging.Handler:
+    def get_logger(self, record: LogRecord) -> logging.Logger:
         name = record.channel
         if not name:
             return self.logger
