@@ -49,7 +49,7 @@ jobs:
 
       - name: Install dependencies and project in non-editable mode
         run: |
-          uv sync --all-extras --no-editable
+          uv sync --all-groups --all-extras --no-editable
 
       - name: Install Zuban
         run: |
