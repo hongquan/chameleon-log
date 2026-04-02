@@ -7,7 +7,7 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'ChameleonLog'
-copyright = '2025, Nguyễn Hồng Quân'
+copyright = '2026, Nguyễn Hồng Quân'
 author = 'Nguyễn Hồng Quân <ng.hong.quan@gmail.com>'
 
 # -- General configuration ---------------------------------------------------

@@ -33,7 +33,6 @@ def is_connected_journald() -> bool:
             # ... your application code ...
 
     :return: ``True`` if connected to journald (running as a service), ``False`` otherwise
-    :rtype: bool
     """
     # Check if journaled environment variables indicate we're running as a service
     journal_stream = os.getenv('JOURNAL_STREAM')

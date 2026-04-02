@@ -194,7 +194,6 @@ class RichHandler(StreamHandler):
         :param message: String containing log message.
         :type message: str
         :return: Renderable to display log message.
-        :rtype: ConsoleRenderable
         """
         use_markup = getattr(record, 'markup', self.use_markup)
         message_text = Text.from_markup(message) if use_markup else Text(message)
@@ -228,7 +227,6 @@ class RichHandler(StreamHandler):
         :param message_renderable: Renderable (typically Text) containing log message contents.
         :type message_renderable: ConsoleRenderable
         :return: Renderable to display log.
-        :rtype: ConsoleRenderable
         """
         path = Path(record.filename or '/opt').name
         level_text = self.get_level_text(record)
@@ -250,7 +248,6 @@ class RichHandler(StreamHandler):
         :param record: logbook Record.
         :type record: LogRecord
         :return: A Text instance containing the level name with appropriate styling.
-        :rtype: Text
         """
         level_name = record.level_name
         level_text = Text.styled(level_name.ljust(8), f'logging.level.{level_name.lower()}')

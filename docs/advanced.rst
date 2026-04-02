@@ -38,8 +38,8 @@ The following complete example demonstrates advanced ``JournaldHandler`` feature
 
 One advantage of `journald <https://wiki.archlinux.org/title/Systemd/Journal>`_ is the ability to attach structured data to log entries, enabling powerful filtering. This is especially useful in multi-tenant systems where logs from many tenants mix together.
 
-🏗️ Two Approaches for Adding Extra Fields
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Two Approaches for Adding Extra Fields
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 `Logbook <https://pypi.org/project/Logbook/>`_ provides two ways to attach extra fields to log records:
 
@@ -69,8 +69,8 @@ Best for injecting context into multiple log calls:
         logger.info('Processing completed')
         # Both logs will have F_REQUEST_ID and F_USER_ID fields
 
-🏗️ Example with Multiple Concurrent Sources
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Example with Multiple Concurrent Sources
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The following example demonstrates logging from multiple concurrent farms, each with its own context:
 
@@ -129,16 +129,16 @@ For codebases that need to work in both development and production environments,
 
 This allows the same codebase to work seamlessly in both environments without code changes.
 
-🤖 Complete Auto-Detection Example
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Complete Auto-Detection Example
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 See ``examples/auto-detect-handler.py`` for a complete working example:
 
 .. literalinclude:: ../examples/auto-detect-handler.py
    :language: python
 
-🐧 Viewing Logs with journalctl
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Viewing Logs with journalctl
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 When using ``JournaldHandler``, logs can be viewed and filtered using ``journalctl``:
 
