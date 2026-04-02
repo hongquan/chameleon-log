@@ -93,6 +93,12 @@ For development and debugging in terminal environments, use ``RichHandler`` for 
         logger.warning('This is a warning message')
         logger.error('An error occurred')
 
+The ``rich_rendering`` parameter controls Rich formatting:
+
+- ``RichRendering.ON``: Always use Rich colorful rendering
+- ``RichRendering.OFF``: Disable Rich formatting, render plain output
+- ``None`` (default): Auto-detect based on ``isatty()``
+
 
 🖼️ Example output
 ==================

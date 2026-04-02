@@ -1,7 +1,7 @@
-__version__ = '1.2.0'
+__version__ = '1.3.0'
 
 from .detectors import is_connected_journald
-from .rich import RichHandler
+from .rich import RichHandler, RichRendering
 
 
-__all__ = ('RichHandler', 'is_connected_journald')
+__all__ = ('RichHandler', 'RichRendering', 'is_connected_journald')

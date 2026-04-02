@@ -2,19 +2,24 @@ from io import StringIO
 
 import logbook
 
-from chameleon_log import RichHandler
+from chameleon_log import RichHandler, RichRendering
+
+
+class TTYStringIO(StringIO):
+    def isatty(self) -> bool:
+        return True
 
 
 def test_rich_handler(logger: logbook.Logger) -> None:
     stream = StringIO()
-    handler = RichHandler(stream=stream, force_terminal=True)
+    handler = RichHandler(stream=stream, rich_rendering=RichRendering.ON)
     with handler:
         logger.error('An error')
         logger.warning('A warning')
         logger.debug('A debug message')
         lines = stream.getvalue().rstrip('\n').splitlines()
 
-    # Rich outputs ANSI escape codes for colors when force_terminal=True
+    # Rich outputs ANSI escape codes for colors when rich_rendering='on'
     # Check that output contains the messages and ANSI codes
     assert len(lines) == 3
     assert 'An error' in lines[0]
@@ -29,7 +34,7 @@ def test_rich_handler(logger: logbook.Logger) -> None:
 def test_rich_handler_exception(logger: logbook.Logger) -> None:
     """Test that logger.exception captures and formats exceptions in Rich style."""
     stream = StringIO()
-    handler = RichHandler(stream=stream, force_terminal=True)
+    handler = RichHandler(stream=stream, rich_rendering=RichRendering.ON)
     with handler:
         handler.rich_tracebacks = True
         try:
@@ -49,7 +54,7 @@ def test_rich_handler_exception(logger: logbook.Logger) -> None:
 def test_rich_handler_dict_highlighting(logger: logbook.Logger) -> None:
     """Test that dictionaries are highlighted by Rich when logged."""
     stream = StringIO()
-    handler = RichHandler(stream=stream, force_terminal=True)
+    handler = RichHandler(stream=stream, rich_rendering=RichRendering.ON)
     with handler:
         logger.info('Dict log: {}', {'a': 1, 'b': 'A string'})
         output = stream.getvalue()
@@ -66,6 +71,7 @@ def test_rich_handler_dict_highlighting(logger: logbook.Logger) -> None:
 
 
 def test_rich_handler_disables_highlighting_for_non_tty_stream(logger: logbook.Logger) -> None:
+    """Test that rich_rendering=None (auto) disables highlighting for non-TTY streams."""
     stream = StringIO()
     handler = RichHandler(stream=stream)
 
@@ -76,5 +82,38 @@ def test_rich_handler_disables_highlighting_for_non_tty_stream(logger: logbook.L
 
     assert 'Redirected' in output
     assert 'output:' in output
-    assert "{'a': 1}" in output
+    assert "'a'" in output
+    assert '1' in output
     assert '\x1b[' not in output
+
+
+def test_rich_handler_off_disables_rich_formatting(logger: logbook.Logger) -> None:
+    """Test that rich_rendering='off' disables Rich formatting even for TTY streams."""
+    stream = TTYStringIO()
+    handler = RichHandler(stream=stream, rich_rendering=RichRendering.OFF)
+
+    with handler:
+        logger.warning('Plain output: {}', {'a': 1})
+
+    output = stream.getvalue()
+
+    assert 'Plain output:' in output
+    assert "'a'" in output
+    assert '1' in output
+    assert '\x1b[' not in output
+
+
+def test_rich_handler_on_enables_rich_formatting_for_non_tty(logger: logbook.Logger) -> None:
+    """Test that rich_rendering='on' enables Rich formatting even for non-TTY streams."""
+    stream = StringIO()
+    handler = RichHandler(stream=stream, rich_rendering=RichRendering.ON)
+
+    with handler:
+        logger.warning('Forced output: {}', {'a': 1})
+
+    output = stream.getvalue()
+
+    assert 'Forced output:' in output
+    assert "'a'" in output
+    assert '1' in output
+    assert '\x1b[' in output

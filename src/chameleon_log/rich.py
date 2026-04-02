@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import sys
+from enum import StrEnum
 from http import HTTPMethod
 from pathlib import Path
 from typing import IO, TYPE_CHECKING
@@ -15,6 +16,13 @@ from rich.console import Console, ConsoleRenderable
 from rich.highlighter import ReprHighlighter
 from rich.text import Text
 from rich.traceback import Traceback
+
+
+class RichRendering(StrEnum):
+    """Enum for controlling Rich rendering mode."""
+
+    ON = 'on'
+    OFF = 'off'
 
 
 if TYPE_CHECKING:
@@ -49,8 +57,11 @@ class RichHandler(StreamHandler):
     :type stream: IO[str] | None
     :param enable_link_path: Enable clickable file paths in terminal (default: True)
     :type enable_link_path: bool
-    :param force_terminal: Force terminal formatting even for non-TTY streams (default: False)
-    :type force_terminal: bool
+    :param rich_rendering: Control Rich rendering mode (default: ``None``)
+        - ``RichRendering.ON``: Always use Rich colorful rendering
+        - ``RichRendering.OFF``: Disable Rich formatting, render plain output
+        - ``None``: Auto-detect based on ``isatty()``
+    :type rich_rendering: RichRendering | None
 
     Example usage::
 
@@ -74,7 +85,7 @@ class RichHandler(StreamHandler):
         *,
         stream: IO[str] | None = None,
         enable_link_path: bool = True,
-        force_terminal: bool = False,
+        rich_rendering: RichRendering | None = None,
     ) -> None:
         super().__init__(
             stream=stream if stream is not None else sys.stderr,
@@ -82,11 +93,10 @@ class RichHandler(StreamHandler):
             filter=filter,
             bubble=bubble,
         )
-        # Only allow to set `force_terminal` once.
-        self._force_terminal = force_terminal
+        self.rendering_mode: RichRendering | None = rich_rendering
         self._console: Console | None = None
         self.highlighter = ReprHighlighter()
-        self._log_render = LogRender(
+        self.log_render = LogRender(
             show_time=True,
             # For development, it is not practical to show date part.
             time_format='[%X]',
@@ -112,8 +122,11 @@ class RichHandler(StreamHandler):
         self.keywords = None
 
     def use_terminal_rendering(self) -> bool:
-        if self._force_terminal:
+        if self.rendering_mode == RichRendering.ON:
             return True
+
+        if self.rendering_mode == RichRendering.OFF:
+            return False
 
         isatty = getattr(self.stream, 'isatty', None)
         return callable(isatty) and isatty()
@@ -128,7 +141,7 @@ class RichHandler(StreamHandler):
             use_terminal_rendering = self.use_terminal_rendering()
             self._console = Console(
                 file=self.stream,
-                force_terminal=self._force_terminal,
+                force_terminal=self.rendering_mode == RichRendering.ON,
                 color_system='standard' if use_terminal_rendering else None,
                 highlight=use_terminal_rendering,
             )
@@ -220,7 +233,7 @@ class RichHandler(StreamHandler):
         path = Path(record.filename or '/opt').name
         level_text = self.get_level_text(record)
 
-        log_renderable = self._log_render(
+        log_renderable = self.log_render(
             self.console,
             [message_renderable] if not traceback else [message_renderable, traceback],
             log_time=record.time,

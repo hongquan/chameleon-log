@@ -45,7 +45,7 @@ def main() -> None:
         # Log an error with traceback
         try:
             # Simulate an error
-            1 / 0
+            1 / 0  # type: ignore[misc]
         except ZeroDivisionError:
             logger.exception('An error occurred during execution')
 

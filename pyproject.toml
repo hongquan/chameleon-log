@@ -45,7 +45,6 @@ build-backend = "hatchling.build"
 test = [
     "logbook-stubs",
     "pytest>=9.0.2",
-    "ty>=0.0.23",
     "pytest-mock",
     "pyrefly>=0.56.0",
 ]
