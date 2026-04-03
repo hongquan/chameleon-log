@@ -25,7 +25,7 @@ if TYPE_CHECKING:
 
 class RichHandler(StreamHandler):
     """
-    A Logbook handler that renders colored, formatted log output using Rich.
+    A Logbook handler that renders colored, formatted log output using `Rich`_.
 
     This handler extends Logbook's StreamHandler to provide rich terminal output
     with features like:
@@ -39,15 +39,15 @@ class RichHandler(StreamHandler):
     The handler automatically detects if it's outputting to a terminal and
     disables colors/formatting when redirecting to files or non-TTY streams.
 
-    :param level: Log level filter (default: NOTSET)
+    :param level: Log level filter (default: ``NOTSET``)
     :type level: LogLevel
-    :param filter: Optional log filter function (default: None)
+    :param filter: Optional log filter function (default: ``None``)
     :type filter: LogFilter | None
-    :param bubble: Whether to bubble logs to parent handlers (default: False)
+    :param bubble: Whether to bubble logs to parent handlers (default: ``False``)
     :type bubble: bool
-    :param stream: Output stream (default: sys.stderr)
+    :param stream: Output stream (default: ``sys.stderr``)
     :type stream: IO[str] | None
-    :param enable_link_path: Enable clickable file paths in terminal (default: True)
+    :param enable_link_path: Enable clickable file paths in terminal (default: ``True``)
     :type enable_link_path: bool
     :param rich_rendering: Control Rich rendering mode (default: ``None``)
         - ``True``: Always use Rich colorful rendering
@@ -67,6 +67,8 @@ class RichHandler(StreamHandler):
             logger.info('Application started')
             logger.warning('Low disk space')
             logger.error('Connection failed')
+
+    .. _Rich: https://github.com/Textualize/rich
     """
 
     def __init__(
@@ -179,9 +181,9 @@ class RichHandler(StreamHandler):
 
     # Ported from rich.logging
     def render_message(self, record: LogRecord, message: str) -> ConsoleRenderable:
-        """Render message text in to Text.
+        """Render message text in to ``Text``.
 
-        :param record: logbook Record.
+        :param record: logbook ``Record``.
         :type record: LogRecord
         :param message: String containing log message.
         :type message: str
@@ -212,11 +214,11 @@ class RichHandler(StreamHandler):
     ) -> ConsoleRenderable:
         """Render log for display.
 
-        :param record: logbook Record.
+        :param record: logbook ``Record``.
         :type record: LogRecord
-        :param traceback: Traceback instance or None for no Traceback.
+        :param traceback: ``Traceback`` instance or ``None`` for no Traceback.
         :type traceback: Traceback | None
-        :param message_renderable: Renderable (typically Text) containing log message contents.
+        :param message_renderable: Renderable (typically ``Text``) containing log message contents.
         :type message_renderable: ConsoleRenderable
         :return: Renderable to display log.
         """
@@ -235,11 +237,11 @@ class RichHandler(StreamHandler):
         return log_renderable
 
     def get_level_text(self, record: LogRecord) -> Text:
-        """Get the level name from the record as a styled Text object.
+        """Get the level name from the record as a styled ``Text`` object.
 
-        :param record: logbook Record.
+        :param record: logbook ``Record``.
         :type record: LogRecord
-        :return: A Text instance containing the level name with appropriate styling.
+        :return: A ``Text`` instance containing the level name with appropriate styling.
         """
         level_name = record.level_name
         level_text = Text.styled(level_name.ljust(8), f'logging.level.{level_name.lower()}')

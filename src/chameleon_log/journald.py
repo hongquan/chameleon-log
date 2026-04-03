@@ -2,15 +2,17 @@
 Journald handler for Logbook.
 
 This module provides a handler that sends Logbook log records to the systemd
-journal (journald) with rich metadata and structured data support.
+`journal`_ with rich metadata and structured data support.
 
 .. note::
-    This module is only available when the "journald" extra is installed::
+    This module is only available when the ``journald`` extra is installed::
 
         pip install chameleon_log[journald]
 
-If the journald extra is not installed, the JournaldHandler will be available
+If the ``journald`` extra is not installed, the ``JournaldHandler`` will be available
 but will be a no-op handler that does nothing.
+
+.. _journal: https://www.freedesktop.org/software/systemd/man/systemd-journald.service.html
 """
 
 from __future__ import annotations
@@ -58,30 +60,33 @@ else:
 
 class JournaldHandler(Handler):
     """
-    Logbook handler to write log to journald.
+    `Logbook`_ handler to write log to `journald`_.
 
-    This handler sends log records to the systemd journal (journald) with rich
-    metadata. It includes standard fields like CODE_FILE, CODE_LINE, etc., as
+    This handler sends log records to the systemd journal (`journald`_) with rich
+    metadata. It includes standard fields like ``CODE_FILE``, ``CODE_LINE``, etc., as
     well as any extra fields from the log record.
 
     Extra field names are automatically uppercased by the handler. For example,
     if you add extra data with key ``farm``, it will be stored as ``F_FARM`` in
-    journald (assuming the default prefix ``f_``). You can then filter logs
-    using journalctl with the uppercase field name.
+    `journald`_ (assuming the default prefix ``f_``). You can then filter logs
+    using ``journalctl`` with the uppercase field name.
 
-    If the journald extra is not installed, this handler acts as a no-op
+    If the ``journald`` extra is not installed, this handler acts as a no-op
     (does nothing) but remains available to prevent import errors.
 
     :param level: Log level filter (default: 0)
-    :type level: int | str
-    :param filter: Optional log filter function (default: None)
-    :type filter: LogFilter | None
-    :param bubble: Whether to bubble logs to parent handlers (default: False)
-    :type bubble: bool
-    :param syslog_identifier: Optional syslog identifier for the logs (default: None)
-    :type syslog_identifier: str | None
+    :type level: ``int`` | ``str``
+    :param filter: Optional log filter function (default: ``None``)
+    :type filter: LogFilter | ``None``
+    :param bubble: Whether to bubble logs to parent handlers (default: ``False``)
+    :type bubble: ``bool``
+    :param syslog_identifier: Optional syslog identifier for the logs (default: ``None``)
+    :type syslog_identifier: ``str`` | ``None``
     :param extra_field_prefix: Prefix for extra fields (default: ``f_``). Will be automatically uppercased.
-    :type extra_field_prefix: str
+    :type extra_field_prefix: ``str``
+
+    .. _Logbook: https://logbook.readthedocs.io/
+    .. _journald: https://www.freedesktop.org/software/systemd/man/systemd-journald.service.html
     """
 
     def __init__(

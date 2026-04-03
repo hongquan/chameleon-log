@@ -18,17 +18,21 @@ The :py:class:`~chameleon_log.journald.JournaldHandler` is only available when t
 
     The ``journald`` extra requires Linux with systemd and installs the ``systemd-python`` package.
 
+=======
+=======
 🐧 JournaldHandler Advanced Features
 ====================================
+========================================================================
+====================================
 
-For applications deployed on Linux servers, writing logs directly to systemd `journald`_ (rather than files or stdout) provides more efficient troubleshooting with filterable metadata.
+For applications deployed on Linux servers, writing logs directly to systemd `journald`_ (rather than files or *stdout*/*stderr*) provides more efficient troubleshooting with filterable metadata.
 
-The ``JournaldHandler`` is not the same as writing logs to stdout/stderr and letting `journald`_ collect them. The latter loses important metadata (timestamps, severity levels, extra fields) that enable powerful filtering.
+The :py:class:`~chameleon_log.journald.JournaldHandler` is not the same as writing logs to *stdout*/*stderr* and letting `journald`_ collect them. The latter loses important metadata (timestamps, severity levels, extra fields) that enable powerful filtering.
 
 🏗️ Complete Example with Extra Fields
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The following complete example demonstrates advanced ``JournaldHandler`` features including extra fields and exception handling:
+The following complete example demonstrates advanced :py:class:`~chameleon_log.journald.JournaldHandler` features including extra fields and exception handling:
 
 .. literalinclude:: ../examples/journald-simple.py
    :language: python
@@ -140,7 +144,7 @@ See ``examples/auto-detect-handler.py`` for a complete working example:
 Viewing Logs with journalctl
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-When using ``JournaldHandler``, logs can be viewed and filtered using ``journalctl``:
+When using :py:class:`~chameleon_log.journald.JournaldHandler`, logs can be viewed and filtered using ``journalctl``:
 
 .. code-block:: shell
 

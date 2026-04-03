@@ -32,7 +32,7 @@ Or using ``uv``:
 🔧 Optional Dependencies
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To use the ``JournaldHandler`` for sending logs to systemd journald (Linux only):
+To use the :py:class:`~chameleon_log.journald.JournaldHandler` for sending logs to systemd journald (Linux only):
 
 .. code-block:: bash
 

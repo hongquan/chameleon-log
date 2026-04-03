@@ -43,7 +43,11 @@ For a more complete example showing all log levels and features, see ``examples/
 .. literalinclude:: ../examples/cli-app.py
    :language: python
 
+=======
+=======
 🐧 JournaldHandler
+===================
+======================================================
 ===================
 
 .. note::
@@ -55,7 +59,7 @@ The :py:class:`~chameleon_log.journald.JournaldHandler` writes logs directly to 
 🎬 Basic Usage
 ~~~~~~~~~~~~~~~~~
 
-Basic ``JournaldHandler`` usage without extra parameters:
+Basic :py:class:`~chameleon_log.journald.JournaldHandler` usage without extra parameters:
 
 .. code-block:: python
 
