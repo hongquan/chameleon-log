@@ -21,9 +21,9 @@ The :py:class:`~chameleon_log.journald.JournaldHandler` is only available when t
 🐧 JournaldHandler Advanced Features
 ====================================
 
-For applications deployed on Linux servers, writing logs directly to systemd `journald <https://wiki.archlinux.org/title/Systemd/Journal>`_ (rather than files or stdout) provides more efficient troubleshooting with filterable metadata.
+For applications deployed on Linux servers, writing logs directly to systemd `journald`_ (rather than files or stdout) provides more efficient troubleshooting with filterable metadata.
 
-The ``JournaldHandler`` is not the same as writing logs to stdout/stderr and letting `journald <https://wiki.archlinux.org/title/Systemd/Journal>`_ collect them. The latter loses important metadata (timestamps, severity levels, extra fields) that enable powerful filtering.
+The ``JournaldHandler`` is not the same as writing logs to stdout/stderr and letting `journald`_ collect them. The latter loses important metadata (timestamps, severity levels, extra fields) that enable powerful filtering.
 
 🏗️ Complete Example with Extra Fields
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -36,12 +36,12 @@ The following complete example demonstrates advanced ``JournaldHandler`` feature
 🏗️ Extra Fields for Structured Filtering
 ==========================================
 
-One advantage of `journald <https://wiki.archlinux.org/title/Systemd/Journal>`_ is the ability to attach structured data to log entries, enabling powerful filtering. This is especially useful in multi-tenant systems where logs from many tenants mix together.
+One advantage of `journald`_ is the ability to attach structured data to log entries, enabling powerful filtering. This is especially useful in multi-tenant systems where logs from many tenants mix together.
 
 Two Approaches for Adding Extra Fields
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-`Logbook <https://pypi.org/project/Logbook/>`_ provides two ways to attach extra fields to log records:
+`Logbook`_ provides two ways to attach extra fields to log records:
 
 *Option 1*: Use the ``extra=`` parameter (simple and direct)
 
@@ -50,7 +50,7 @@ Best for adding fields to a single log call:
 .. code-block:: python
 
     logger.info('User action', extra={'user_id': 123, 'action': 'login'})
-    # Results in fields: F_USER_ID=123, F_ACTION=login in `journald <https://wiki.archlinux.org/title/Systemd/Journal>`_
+    # Results in fields: F_USER_ID=123, F_ACTION=login in `journald`_
 
 *Option 2*: Use a ``Processor`` (for reusable context)
 
@@ -98,7 +98,7 @@ The ``RichHandler`` can be customized for different use cases:
         logger.debug('Debug information')
         logger.info('Application started')
 
-The handler supports all `Logbook <https://pypi.org/project/Logbook/>`_ log levels and provides formatted exception tracebacks with syntax highlighting.
+The handler supports all `Logbook`_ log levels and provides formatted exception tracebacks with syntax highlighting.
 
 The ``rich_rendering`` parameter controls Rich formatting:
 
@@ -117,7 +117,7 @@ For codebases that need to work in both development and production environments,
     from chameleon_log.journald import JournaldHandler
 
     if is_connected_journald():
-        # Production: systemd service - use `journald <https://wiki.archlinux.org/title/Systemd/Journal>`_
+        # Production: systemd service - use `journald`_
         handler = JournaldHandler(syslog_identifier='my-service')
     else:
         # Development: terminal - use pretty console output
@@ -157,3 +157,6 @@ When using ``JournaldHandler``, logs can be viewed and filtered using ``journalc
     journalctl -eu my-service -o json
 
 Normally, you view app logs with ``-u`` (unit name). The ``syslog_identifier`` is helpful when your app runs across multiple systemd units, allowing you to use ``journalctl -t`` to view all logs from your application.
+
+.. _journald: https://wiki.archlinux.org/title/Systemd/Journal
+.. _Logbook: https://pypi.org/project/Logbook/

@@ -1,7 +1,7 @@
 💡 Simple Usage
 =================
 
-ChameleonLog provides two handlers for different environments: :py:class:`~chameleon_log.RichHandler` for colorful console output during development, and :py:class:`~chameleon_log.journald.JournaldHandler` for structured logging to `systemd <https://systemd.io/>`_ `journald <https://wiki.archlinux.org/title/Systemd/Journal>`_ in production.
+ChameleonLog provides two handlers for different environments: :py:class:`~chameleon_log.RichHandler` for colorful console output during development, and :py:class:`~chameleon_log.journald.JournaldHandler` for structured logging to `systemd`_ `journald`_ in production.
 
 ✨ RichHandler
 ================
@@ -48,9 +48,9 @@ For a more complete example showing all log levels and features, see ``examples/
 
 .. note::
 
-    JournaldHandler requires Linux with `systemd <https://systemd.io/>`_. Install with: ``pip install chameleon_log[journald]``
+    JournaldHandler requires Linux with `systemd`_. Install with: ``pip install chameleon_log[journald]``
 
-The :py:class:`~chameleon_log.journald.JournaldHandler` writes logs directly to `systemd <https://systemd.io/>`_ `journald <https://wiki.archlinux.org/title/Systemd/Journal>`_ for **production/live systems**, with full metadata preservation.
+The :py:class:`~chameleon_log.journald.JournaldHandler` writes logs directly to `systemd`_ `journald`_ for **production/live systems**, with full metadata preservation.
 
 🎬 Basic Usage
 ~~~~~~~~~~~~~~~~~
@@ -75,7 +75,7 @@ View logs with ``journalctl``:
 
 .. code-block:: shell
 
-    journalctl -u my-service  # Or by `systemd <https://systemd.io/>`_ unit name
+    journalctl -u my-service  # Or by `systemd`_ unit name
     journalctl -t my-app  # Filter by syslog identifier
 
 📝 Simple Example
@@ -88,3 +88,6 @@ See ``examples/journald-simple.py`` for a complete basic example with exception 
    :lines: 1-42
 
 This example demonstrates basic logging at different levels and exception handling without using extra fields.
+
+.. _systemd: https://systemd.io/
+.. _journald: https://wiki.archlinux.org/title/Systemd/Journal
