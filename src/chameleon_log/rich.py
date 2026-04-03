@@ -30,7 +30,7 @@ class RichHandler(StreamHandler):
     This handler extends Logbook's StreamHandler to provide rich terminal output
     with features like:
 
-    - Colored log levels with consistent 8-character width padding
+    - Colored log levels with 8-character width (via ``ljust(8)``)
     - Syntax highlighting for log messages
     - Clickable file paths with line numbers
     - Optional tracebacks with rich formatting
@@ -87,7 +87,7 @@ class RichHandler(StreamHandler):
             filter=filter,
             bubble=bubble,
         )
-        self.rendering_mode: bool | None = rich_rendering
+        self.rich_rendering: bool | None = rich_rendering
         self._console: Console | None = None
         self.highlighter = ReprHighlighter()
         self.log_render = LogRender(
@@ -97,7 +97,7 @@ class RichHandler(StreamHandler):
             show_level=True,
             show_path=True,
             omit_repeated_times=True,
-            level_width=None,
+            # level_width controlled by get_level_text() via ljust(8)
         )
         self.enable_link_path = enable_link_path
         # These attributes are for Rich. We don't let configurable yet.
@@ -113,36 +113,41 @@ class RichHandler(StreamHandler):
         self.tracebacks_code_width = 88
         self.locals_max_length = 10
         self.locals_max_string = 80
-        self.keywords = None
+        self.keywords = tuple(HTTPMethod)
 
     def use_terminal_rendering(self) -> bool:
-        if self.rendering_mode is True:
+        if self.rich_rendering is True:
             return True
 
-        if self.rendering_mode is False:
+        if self.rich_rendering is False:
             return False
 
         isatty = getattr(self.stream, 'isatty', None)
-        return callable(isatty) and isatty()
+        if not callable(isatty):
+            return False
+        result = isatty()
+        return bool(result)
 
     def format(self, record: LogRecord) -> str:
         channel_name = record.channel.rsplit('.', 1)[-1] if record.channel else ''
         return f'{channel_name}: {record.message}'
 
     @property
-    def console(self) -> Console:
-        if self._console is None:
-            use_terminal_rendering = self.use_terminal_rendering()
+    def console(self) -> Console | None:
+        if self._console is None and self.use_terminal_rendering():
             self._console = Console(
                 file=self.stream,
-                force_terminal=self.rendering_mode is True,
-                color_system='standard' if use_terminal_rendering else None,
-                highlight=use_terminal_rendering,
+                force_terminal=self.rich_rendering is True,
+                color_system='standard',
+                highlight=True,
             )
         return self._console
 
     def emit(self, record: LogRecord) -> None:
         message = self.format(record)
+        if not self.console:
+            self.write_plain(message)
+            return
         traceback: Traceback | None = None
         if (
             self.rich_tracebacks
@@ -169,11 +174,27 @@ class RichHandler(StreamHandler):
                 max_frames=self.tracebacks_max_frames,
             )
         message_renderable = self.render_message(record, message)
-        log_renderable = self.render(record=record, traceback=traceback, message_renderable=message_renderable)
+        log_renderable = self.render(
+            record=record, console=self.console, traceback=traceback, message_renderable=message_renderable
+        )
         self.lock.acquire()
         try:
             self.ensure_stream_is_open()
             self.console.print(log_renderable)
+            if self.should_flush():
+                self.flush()
+        finally:
+            self.lock.release()
+
+    def write_plain(self, message: str) -> None:
+        """
+        Write plain message (no color)
+        """
+        self.lock.acquire()
+        try:
+            self.ensure_stream_is_open()
+            self.stream.write(message)
+            self.stream.write('\n')
             if self.should_flush():
                 self.flush()
         finally:
@@ -196,9 +217,6 @@ class RichHandler(StreamHandler):
         if highlighter:
             message_text = highlighter(message_text)
 
-        if self.keywords is None:
-            self.keywords = tuple(HTTPMethod)
-
         if self.keywords:
             message_text.highlight_words(self.keywords, 'logging.keyword')
 
@@ -209,6 +227,7 @@ class RichHandler(StreamHandler):
         self,
         *,
         record: LogRecord,
+        console: Console,
         traceback: Traceback | None,
         message_renderable: ConsoleRenderable,
     ) -> ConsoleRenderable:
@@ -226,7 +245,7 @@ class RichHandler(StreamHandler):
         level_text = self.get_level_text(record)
 
         log_renderable = self.log_render(
-            self.console,
+            console,
             [message_renderable] if not traceback else [message_renderable, traceback],
             log_time=record.time,
             level=level_text,
