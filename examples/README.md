@@ -6,9 +6,14 @@ This directory contains examples demonstrating how to use ChameleonLog with diff
 
 ### Basic Examples
 
-- **cli-app.py** - Basic example using RichHandler for colorful console output
+- **cli-simple.py** - Basic example using RichHandler for colorful console output
   ```bash
-  python cli-app.py
+  python cli-simple.py
+  ```
+
+- **cli-rich-tracebacks.py** - Basic example using RichHandler with rich tracebacks enabled
+  ```bash
+  python cli-rich-tracebacks.py
   ```
 
 ### Journald Examples

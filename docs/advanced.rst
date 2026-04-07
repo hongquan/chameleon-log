@@ -72,7 +72,7 @@ The ``RichHandler`` can be customized for different use cases:
     handler = RichHandler(
         level=logbook.DEBUG,           # Set minimum log level
         enable_link_path=True,         # Enable clickable file paths in terminals
-        rich_rendering=True  # Always use Rich colorful rendering
+        rich_rendering=True            # Always use Rich colorful rendering
     )
 
     with handler:
@@ -82,16 +82,31 @@ The ``RichHandler`` can be customized for different use cases:
 
 The handler supports all `Logbook`_ log levels and provides formatted exception tracebacks with syntax highlighting.
 
-The ``rich_rendering`` parameter controls Rich formatting:
+Sometimes, the application's ``stderr`` is connected to something not a Terminal, so it does not make sense to render the colors, table layout.
+The ``rich_rendering`` parameter allows you to disable / enable that feature:
 
-- ``True``: Always use Rich colorful rendering
-- ``False``: Disable Rich formatting, render plain output
-- ``None`` (default): Auto-detect based on ``isatty()``
+- ``True``: Always use Rich colorful rendering.
+- ``False``: Disable Rich formatting, render plain output.
+- ``None`` (default): Auto-detect based on ``isatty()``.
 
-🤖 Automatic handler selection
-------------------------------
+Additionally, the handler exposes a ``rich_tracebacks`` flag to control how exceptions are displayed:
 
-For codebases that need to work in both development and production environments, you can automatically select the appropriate handler based on the runtime environment:
+- ``rich_tracebacks=True``: The traceback is rendered with editor-like interface: line numbers and frames.
+- ``rich_tracebacks=False`` (default): Simple display of traceback, like it is done originally with Python, with colors added.
+
+Example enabling rich tracebacks::
+
+    from chameleon_log import RichHandler
+
+    handler = RichHandler(rich_tracebacks=True, rich_rendering=True)
+
+See the examples in the ``examples/`` directory for runnable demos that show both behaviors.
+
+🤖 Conditional handler selection
+--------------------------------
+
+Each handler is only suitable for a running environment, you can implement the feature to conditionally switch to the appropriate handler with the help of ``is_connected_journald``.
+
 
 .. code-block:: python
 
@@ -109,7 +124,6 @@ For codebases that need to work in both development and production environments,
         logger = logbook.Logger(__name__)
         logger.info('Application started')
 
-This allows the same codebase to work seamlessly in both environments without code changes.
 
 Complete auto-detection example
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -119,7 +133,7 @@ See ``examples/auto-detect-handler.py`` for a complete working example:
 .. literalinclude:: ../examples/auto-detect-handler.py
    :language: python
 
-🐧 Viewing Logs with journalctl
+🐧 Viewing logs with journalctl
 -------------------------------
 
 When using :py:class:`~chameleon_log.journald.JournaldHandler`, logs can be viewed and filtered using ``journalctl``:

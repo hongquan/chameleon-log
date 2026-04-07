@@ -99,11 +99,19 @@ The ``rich_rendering`` parameter controls Rich formatting:
 - ``False``: Disable Rich formatting, render plain output
 - ``None`` (default): Auto-detect based on ``isatty()``
 
+Additionally, ``RichHandler`` accepts a ``rich_tracebacks`` boolean to control how exceptions are rendered:
+
+- ``rich_tracebacks=True``: Render exceptions using Rich Traceback objects when terminal rendering is enabled.
+- ``rich_tracebacks=False`` (default): Append the plain-text formatted traceback to the log message. This is useful when logs are captured to files or external systems that do not support Rich rendering.
 
 🖼️ Example output
 ==================
 
-.. image:: https://quan-images.b-cdn.net/blogs/2026/03/rich.png
+.. image:: https://quan-images.b-cdn.net/blogs/2026/04/rich-simple.png
+   :alt: Rich Handler Output
+   :width: 100%
+
+.. image:: https://quan-images.b-cdn.net/blogs/2026/04/rich-traceback.png
    :alt: Rich Handler Output
    :width: 100%
 

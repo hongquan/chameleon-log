@@ -31,17 +31,28 @@ This will produce colorful, formatted output in your terminal with proper log le
 🖼️ Output
 ~~~~~~~~~~~
 
-.. image:: https://quan-images.b-cdn.net/blogs/2026/03/rich.png
+.. image:: https://quan-images.b-cdn.net/blogs/2026/04/rich-simple.png
    :alt: Rich Handler Output
    :width: 100%
+
+.. image:: https://quan-images.b-cdn.net/blogs/2026/04/rich-traceback.png
+   :alt: Rich Handler Output
+   :width: 100%
+
 
 📝 Complete Example
 ~~~~~~~~~~~~~~~~~~~~~
 
-For a more complete example showing all log levels and features, see ``examples/cli-app.py``:
+For a more complete example showing all log levels and features, see ``examples/cli-simple.py`` and ``examples/cli-rich-tracebacks.py``:
 
-.. literalinclude:: ../examples/cli-app.py
+.. literalinclude:: ../examples/cli-simple.py
    :language: python
+
+For a demo that shows Rich-formatted tracebacks, run:
+
+.. code-block:: bash
+
+    python examples/cli-rich-tracebacks.py
 
 🐧 JournaldHandler
 ===================

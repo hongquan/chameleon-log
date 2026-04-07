@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.6.0] - 2026-04-07
+
+### Added
+
+-  Add option to render traceback in rich way.
+
+### Fixed
+
+- Recover the feature to show traceback in `RichHandler`.
+
+
 ## [1.5.0] - 2026-04-03
 
 ### Fixed

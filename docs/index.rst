@@ -64,7 +64,7 @@ This will also install the `systemd-python`_ package, requiring systemd-based Li
 
 Example code is available in the ``examples/`` directory:
 
-- ``cli-app.py`` - RichHandler usage with various log levels and data types
+- ``cli-simple.py`` - RichHandler usage with various log levels and data types
 - ``journald-simple.py`` - Basic JournaldHandler usage with exception handling
 - ``journald-extra-fields.py`` - Advanced JournaldHandler with structured fields
 - ``auto-detect-handler.py`` - Automatic handler selection based on environment

@@ -34,9 +34,8 @@ def test_rich_handler(logger: logbook.Logger) -> None:
 def test_rich_handler_exception(logger: logbook.Logger) -> None:
     """Test that logger.exception captures and formats exceptions in Rich style."""
     stream = StringIO()
-    handler = RichHandler(stream=stream, rich_rendering=True)
+    handler = RichHandler(stream=stream, rich_rendering=True, rich_tracebacks=True)
     with handler:
-        handler.rich_tracebacks = True
         try:
             raise ValueError('Test exception message')
         except ValueError:
@@ -49,6 +48,42 @@ def test_rich_handler_exception(logger: logbook.Logger) -> None:
     assert 'ValueError' in output
     # Verify ANSI codes are present (Rich formatting)
     assert '\x1b[' in output
+
+
+def test_rich_handler_rich_tracebacks_can_be_enabled_in_constructor(logger: logbook.Logger) -> None:
+    """Test that rich_tracebacks can be enabled when the handler is created."""
+    stream = StringIO()
+    handler = RichHandler(stream=stream, rich_rendering=True, rich_tracebacks=True)
+
+    with handler:
+        try:
+            raise ValueError('Test exception message')
+        except ValueError:
+            logger.exception('An exception occurred')
+
+    output = stream.getvalue()
+
+    assert 'An exception occurred' in output
+    assert 'ValueError' in output
+    assert '\x1b[' in output
+
+
+def test_rich_handler_exception_without_rich_tracebacks(logger: logbook.Logger) -> None:
+    """Test that logger.exception appends tracebacks when Rich tracebacks are disabled."""
+    stream = StringIO()
+    handler = RichHandler(stream=stream, rich_rendering=False)
+    with handler:
+        handler.rich_tracebacks = False
+        try:
+            raise ValueError('Test exception message')
+        except ValueError:
+            logger.exception('An exception occurred')
+        output = stream.getvalue()
+
+    assert 'An exception occurred' in output
+    assert 'Traceback (most recent call last):' in output
+    assert 'ValueError: Test exception message' in output
+    assert '\x1b[' not in output
 
 
 def test_rich_handler_dict_highlighting(logger: logbook.Logger) -> None:

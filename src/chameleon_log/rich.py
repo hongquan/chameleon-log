@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import sys
+from collections.abc import Iterable
 from http import HTTPMethod
 from pathlib import Path
 from typing import IO, TYPE_CHECKING
@@ -10,11 +11,12 @@ from logbook.base import (
     LogRecord,
 )
 from logbook.handlers import StreamHandler
-from rich._log_render import LogRender
 from rich.console import Console, ConsoleRenderable
 from rich.highlighter import ReprHighlighter
 from rich.text import Text
 from rich.traceback import Traceback
+
+from .renderer import LogRender
 
 
 if TYPE_CHECKING:
@@ -49,6 +51,9 @@ class RichHandler(StreamHandler):
     :type stream: IO[str] | None
     :param enable_link_path: Enable clickable file paths in terminal (default: ``True``)
     :type enable_link_path: bool
+    :param rich_tracebacks: Render exceptions with Rich tracebacks instead of appending plain traceback text.
+        Default: ``False``.
+    :type rich_tracebacks: bool
     :param rich_rendering: Control Rich rendering mode (default: ``None``)
         - ``True``: Always use Rich colorful rendering
         - ``False``: Disable Rich formatting, render plain output
@@ -79,6 +84,7 @@ class RichHandler(StreamHandler):
         *,
         stream: IO[str] | None = None,
         enable_link_path: bool = True,
+        rich_tracebacks: bool = False,
         rich_rendering: bool | None = None,
     ) -> None:
         super().__init__(
@@ -102,7 +108,7 @@ class RichHandler(StreamHandler):
         self.enable_link_path = enable_link_path
         # These attributes are for Rich. We don't let configurable yet.
         self.use_markup = False
-        self.rich_tracebacks = False
+        self.rich_tracebacks = rich_tracebacks
         self.tracebacks_width = None
         self.tracebacks_extra_lines = 3
         self.tracebacks_theme = None
@@ -145,12 +151,11 @@ class RichHandler(StreamHandler):
 
     def emit(self, record: LogRecord) -> None:
         message = self.format(record)
-        if not self.console:
-            self.write_plain(message)
-            return
+        exception_text = record.formatted_exception if record.exc_info else None
         traceback: Traceback | None = None
         if (
-            self.rich_tracebacks
+            self.console
+            and self.rich_tracebacks
             and record.exc_info
             and record.exc_info != (None, None, None)
             and record.exc_info is not True
@@ -173,10 +178,17 @@ class RichHandler(StreamHandler):
                 suppress=self.tracebacks_suppress,
                 max_frames=self.tracebacks_max_frames,
             )
+        elif exception_text:
+            message = f'{message}\n{exception_text}'
+
+        if not self.console:
+            self.write_plain(message)
+            return
         message_renderable = self.render_message(record, message)
-        log_renderable = self.render(
-            record=record, console=self.console, traceback=traceback, message_renderable=message_renderable
-        )
+        renderables: tuple[ConsoleRenderable, ...] = (message_renderable,)
+        if traceback is not None:
+            renderables = renderables + (traceback,)
+        log_renderable = self.render(record=record, console=self.console, renderables=renderables)
         self.lock.acquire()
         try:
             self.ensure_stream_is_open()
@@ -228,17 +240,14 @@ class RichHandler(StreamHandler):
         *,
         record: LogRecord,
         console: Console,
-        traceback: Traceback | None,
-        message_renderable: ConsoleRenderable,
+        renderables: Iterable[ConsoleRenderable],
     ) -> ConsoleRenderable:
         """Render log for display.
 
         :param record: logbook ``Record``.
         :type record: LogRecord
-        :param traceback: ``Traceback`` instance or ``None`` for no Traceback.
-        :type traceback: Traceback | None
-        :param message_renderable: Renderable (typically ``Text``) containing log message contents.
-        :type message_renderable: ConsoleRenderable
+        :param renderables: Renderables to display in the log row and continuation row.
+        :type renderables: Iterable[ConsoleRenderable]
         :return: Renderable to display log.
         """
         path = Path(record.filename or '/opt').name
@@ -246,7 +255,7 @@ class RichHandler(StreamHandler):
 
         log_renderable = self.log_render(
             console,
-            [message_renderable] if not traceback else [message_renderable, traceback],
+            renderables,
             log_time=record.time,
             level=level_text,
             path=path,
