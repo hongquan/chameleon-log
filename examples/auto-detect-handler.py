@@ -21,6 +21,7 @@ def main() -> None:
     This pattern allows the same code to work in both development and production.
     """
     # Detect if we're running in a systemd service or terminal
+    handler: JournaldHandler | RichHandler
     if is_connected_journald():
         # Production environment: running as systemd service
         print('Detected systemd service environment, using JournaldHandler')

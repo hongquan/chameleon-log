@@ -43,7 +43,7 @@ build-backend = "hatchling.build"
 
 [dependency-groups]
 test = [
-    "logbook-stubs",
+    "logbook-stubs>=0.3.0",
     "pytest>=9.0.2",
     "pytest-mock",
 ]
@@ -65,14 +65,11 @@ docs = [
 path = 'src/chameleon_log/__init__.py'
 
 # Ref: https://hatch.pypa.io/latest/how-to/environment/workspace/
-[tool.hatch.envs.default]
-workspace.members = ["packages/*", "packages/logbook-stubs"]
 
-[tool.uv.workspace]
-members = ["packages/*", "packages/logbook-stubs"]
 
-[tool.uv.sources]
-logbook-stubs = { workspace = true }
+[[tool.mypy.overrides]]
+module = ["systemd"]
+ignore_missing_imports = true
 
 [tool.ruff]
 line-length = 120

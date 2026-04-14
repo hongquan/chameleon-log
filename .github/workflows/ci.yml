@@ -10,10 +10,10 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6.0.2
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v8.0.0
         with:
           enable-cache: true
 
@@ -35,10 +35,10 @@ jobs:
   type-check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6.0.2
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v8.0.0
         with:
           enable-cache: true
 
@@ -47,9 +47,9 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libsystemd-dev pkg-config
 
-      - name: Install dependencies and project in non-editable mode
+      - name: Install dependencies
         run: |
-          uv sync --all-groups --all-extras --no-editable
+          uv sync --all-groups --all-extras
 
       - name: Install Zuban
         run: |
@@ -65,10 +65,10 @@ jobs:
       matrix:
         python-version: ['3.12', '3.13', '3.14']
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6.0.2
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v8.0.0
         with:
           enable-cache: true
 
@@ -91,10 +91,10 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6.0.2
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v8.0.0
         with:
           enable-cache: true
 

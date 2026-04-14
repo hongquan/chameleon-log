@@ -2,12 +2,6 @@ version = 1
 revision = 3
 requires-python = ">=3.12"
 
-[manifest]
-members = [
-    "chameleon-log",
-    "logbook-stubs",
-]
-
 [[package]]
 name = "accessible-pygments"
 version = "0.0.5"
@@ -134,7 +128,7 @@ docs = [
 ]
 lint = [{ name = "ruff", specifier = ">=0.15.6" }]
 test = [
-    { name = "logbook-stubs", editable = "packages/logbook-stubs" },
+    { name = "logbook-stubs", specifier = ">=0.3.0" },
     { name = "pytest", specifier = ">=9.0.2" },
     { name = "pytest-mock" },
 ]
@@ -371,7 +365,11 @@ wheels = [
 [[package]]
 name = "logbook-stubs"
 version = "0.3.0"
-source = { editable = "packages/logbook-stubs" }
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/30/53/3ec686992289d127186224d9373b1bdd4f654951c9befa6812c00426bcc1/logbook_stubs-0.3.0.tar.gz", hash = "sha256:516e0d2152053e66246ada18cc59b9e18f558230b1732a793f4c7aaca425571f", size = 4570, upload-time = "2026-03-17T05:29:19.069Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/69/30/7baf03c7b1125f354b5a48174d075e7312254b814752fa78ca3658e0d24f/logbook_stubs-0.3.0-py3-none-any.whl", hash = "sha256:ff161afff72bd65c0e00eee06908ad7d3b76d9b4fb50dff9a9bbe72c5fbefc27", size = 4869, upload-time = "2026-03-17T05:29:20.203Z" },
+]
 
 [[package]]
 name = "markdown-it-py"

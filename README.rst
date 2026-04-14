@@ -209,6 +209,11 @@ scatters across many systemd units, you then can use ``journalctl -t`` to view a
 
 Full documentation is available at: https://chameleon-log.readthedocs.io
 
+logbook-stubs
+=============
+
+If you come here for ``logbook-stubs`` source, it is already moved to a separate `repository <logbook-stubs-source>`_.
+
 📄 License
 ==========
 
@@ -222,3 +227,4 @@ Logo by `Freepik <https://www.freepik.com>`_.
 .. _journald: https://wiki.archlinux.org/title/Systemd/Journal
 .. _systemd-python: https://pypi.org/project/systemd-python/
 .. _LICENSE: https://github.com/hongquan/chameleon-log/blob/master/LICENSE
+.. _logbook-stubs-source: https://github.com/hongquan/logbook-stubs

@@ -34,7 +34,7 @@ _JOURNALD_AVAILABLE = importlib.util.find_spec('systemd') is not None
 if _JOURNALD_AVAILABLE:
     from systemd import journal
 
-    LEVEL_TO_PRIORITY = {
+    LEVEL_TO_PRIORITY: dict[str, int] = {
         'DEBUG': journal.LOG_DEBUG,
         'INFO': journal.LOG_INFO,
         'WARNING': journal.LOG_WARNING,
@@ -52,7 +52,7 @@ if _JOURNALD_AVAILABLE:
 
 else:
     # No-op functions when systemd-python is not available
-    LEVEL_TO_PRIORITY: dict[str, int] = {}
+    LEVEL_TO_PRIORITY: dict[str, int] = {}  # type: ignore[no-redef]
 
     def send_to_standard_journal(message: str, priority: int, **extra_fields: object) -> None:  # type: ignore[unused-arg]
         pass
