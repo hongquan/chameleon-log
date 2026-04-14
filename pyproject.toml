@@ -1,7 +1,7 @@
 #:tombi schema.strict = false
 
 [project]
-name = "chameleon_log"
+name = "chameleon-log"
 description = "Colourful handlers for Logbook, based on Rich and Journald."
 readme = "README.rst"
 authors = [
@@ -29,7 +29,7 @@ classifiers = [
 
 [project.optional-dependencies]
 journald = [
-  "systemd-python >= 235; sys_platform == 'linux'",
+  "journald-send >= 0.3.0; sys_platform == 'linux'",
 ]
 
 [project.urls]
@@ -48,7 +48,7 @@ test = [
     "pytest-mock",
 ]
 lint = [
-    "ruff>=0.15.6",
+    "ruff>=0.15.10",
 ]
 dev = [
     "pre-commit>=4.5.1",
@@ -63,8 +63,6 @@ docs = [
 
 [tool.hatch.version]
 path = 'src/chameleon_log/__init__.py'
-
-# Ref: https://hatch.pypa.io/latest/how-to/environment/workspace/
 
 
 [[tool.mypy.overrides]]

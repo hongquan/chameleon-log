@@ -1,28 +1,41 @@
 from __future__ import annotations
 
-from typing import cast
+import json
+import subprocess
+import time
 
 import logbook
 import pytest
-import pytest_mock
 
 import chameleon_log.journald as journald_module
 
 
-@pytest.mark.skipif(not journald_module._JOURNALD_AVAILABLE, reason='systemd-python not installed')
-def test_journald_handler_appends_exception_to_message(
-    logger: logbook.Logger,
-    mocker: pytest_mock.MockerFixture,
-) -> None:
-    sent_calls: list[tuple[str, int, dict[str, object]]] = []
+def query_journal(identifier: str, since: float, code_func: str | None = None) -> list[dict[str, str]]:
+    result = subprocess.run(
+        [
+            'journalctl',
+            '--user',
+            '-t',
+            identifier,
+            '--since=@' + str(int(since)),
+            '-p',
+            'debug',
+            '--no-pager',
+            '-o',
+            'json',
+        ],
+        capture_output=True,
+    )
+    entries = [json.loads(ln) for ln in result.stdout.decode().splitlines() if ln.strip()]
+    if code_func:
+        entries = [e for e in entries if e.get('CODE_FUNC') == code_func]
+    return entries
 
-    def capture_journal_send(message: str, priority: int, **extra_fields: object) -> None:
-        sent_calls.append((message, priority, extra_fields))
 
-    handler = journald_module.JournaldHandler(syslog_identifier='test-service')
-
-    # Patch the function directly
-    mocker.patch.object(journald_module, 'send_to_standard_journal', side_effect=capture_journal_send)
+@pytest.mark.skipif(not journald_module._JOURNALD_AVAILABLE, reason='journald-send not installed')
+def test_journald_handler_appends_exception_to_message(logger: logbook.Logger) -> None:
+    since = time.time()
+    handler = journald_module.JournaldHandler(syslog_identifier='chameleon-test')
 
     with handler:
         try:
@@ -30,43 +43,66 @@ def test_journald_handler_appends_exception_to_message(
         except ValueError:
             logger.exception('An exception occurred')
 
-    assert len(sent_calls) == 1
+    entries = query_journal('chameleon-test', since, 'test_journald_handler_appends_exception_to_message')
+    assert len(entries) == 1
 
-    message, _, extra_fields = sent_calls[0]
+    msg = entries[0]['MESSAGE']
+    assert 'An exception occurred' in msg
+    assert '\n' in msg
+    assert 'ValueError: Test exception message' in msg
 
-    assert 'An exception occurred' in message
-    assert '\n' in message
-    assert 'ValueError: Test exception message' in message
-    assert 'EXCEPTION_INFO' not in extra_fields
-    # EXCEPTION_TEXT is added to extra_fields for structured logging
-    assert 'EXCEPTION_TEXT' in extra_fields
-    exception_text = cast(str, extra_fields['EXCEPTION_TEXT'])
-    assert 'Traceback' in exception_text
-    assert 'ValueError: Test exception message' in exception_text
+    exc_text = entries[0].get('EXCEPTION_TEXT', '')
+    assert 'Traceback' in exc_text
+    assert 'ValueError: Test exception message' in exc_text
 
 
-@pytest.mark.skipif(not journald_module._JOURNALD_AVAILABLE, reason='systemd-python not installed')
-def test_journald_handler_preserves_message_without_exception(
-    logger: logbook.Logger,
-    mocker: pytest_mock.MockerFixture,
-) -> None:
-    sent_calls: list[tuple[str, int, dict[str, object]]] = []
-
-    def capture_journal_send(message: str, priority: int, **extra_fields: object) -> None:
-        sent_calls.append((message, priority, extra_fields))
-
-    handler = journald_module.JournaldHandler(syslog_identifier='test-service')
-
-    # Patch the function directly
-    mocker.patch.object(journald_module, 'send_to_standard_journal', side_effect=capture_journal_send)
+@pytest.mark.skipif(not journald_module._JOURNALD_AVAILABLE, reason='journald-send not installed')
+def test_journald_handler_preserves_message_without_exception(logger: logbook.Logger) -> None:
+    since = time.time()
+    handler = journald_module.JournaldHandler(syslog_identifier='chameleon-test')
 
     with handler:
         logger.info('Plain message')
 
-    assert len(sent_calls) == 1
+    entries = query_journal('chameleon-test', since, 'test_journald_handler_preserves_message_without_exception')
+    assert len(entries) == 1
+    assert entries[0]['MESSAGE'] == 'Plain message'
+    assert 'EXCEPTION_TEXT' not in entries[0]
 
-    message, _, extra_fields = sent_calls[0]
 
-    assert message == 'Plain message'
-    assert 'EXCEPTION_INFO' not in extra_fields
-    assert 'EXCEPTION_TEXT' not in extra_fields
+@pytest.mark.skipif(not journald_module._JOURNALD_AVAILABLE, reason='journald-send not installed')
+def test_journald_handler_includes_metadata(logger: logbook.Logger) -> None:
+    since = time.time()
+    handler = journald_module.JournaldHandler(syslog_identifier='chameleon-test')
+
+    with handler:
+        logger.info('Message with metadata')
+
+    entries = query_journal('chameleon-test', since, 'test_journald_handler_includes_metadata')
+    assert len(entries) == 1
+
+    assert 'LOGGER' in entries[0]
+    assert entries[0]['LOGGER'] == 'testlogger'
+    assert 'THREAD_NAME' in entries[0]
+    assert 'PROCESS_NAME' in entries[0]
+    assert 'MODULE' in entries[0]
+    assert entries[0]['LEVEL'] == 'INFO'
+    assert 'SYSLOG_IDENTIFIER' in entries[0]
+    assert entries[0]['SYSLOG_IDENTIFIER'] == 'chameleon-test'
+
+
+@pytest.mark.skipif(not journald_module._JOURNALD_AVAILABLE, reason='journald-send not installed')
+def test_journald_handler_sends_extra_fields(logger: logbook.Logger) -> None:
+    since = time.time()
+    handler = journald_module.JournaldHandler(syslog_identifier='chameleon-test', extra_field_prefix='F_')
+
+    with handler:
+        logger.info('Message with extra fields', extra={'farm': 'tomato', 'crop': 'vegetable'})
+
+    entries = query_journal('chameleon-test', since, 'test_journald_handler_sends_extra_fields')
+    assert len(entries) == 1
+
+    assert 'F_FARM' in entries[0]
+    assert entries[0]['F_FARM'] == 'tomato'
+    assert 'F_CROP' in entries[0]
+    assert entries[0]['F_CROP'] == 'vegetable'

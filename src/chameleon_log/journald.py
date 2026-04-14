@@ -2,7 +2,7 @@
 Journald handler for Logbook.
 
 This module provides a handler that sends Logbook log records to the systemd
-`journal`_ with rich metadata and structured data support.
+`journald`_ with rich metadata and structured data support.
 
 .. note::
     This module is only available when the ``journald`` extra is installed::
@@ -12,7 +12,7 @@ This module provides a handler that sends Logbook log records to the systemd
 If the ``journald`` extra is not installed, the ``JournaldHandler`` will be available
 but will be a no-op handler that does nothing.
 
-.. _journal: https://www.freedesktop.org/software/systemd/man/systemd-journald.service.html
+.. _journald: https://www.freedesktop.org/software/systemd/man/systemd-journald.service.html
 """
 
 from __future__ import annotations
@@ -28,33 +28,52 @@ if TYPE_CHECKING:
     from logbook.handlers import LogFilter
 
 
-# Check if systemd-python is available
-_JOURNALD_AVAILABLE = importlib.util.find_spec('systemd') is not None
+# Check if journald-send is available
+_JOURNALD_AVAILABLE = importlib.util.find_spec('journald_send') is not None
+
+LEVEL_TO_PRIORITY: dict[str, int] = {}
 
 if _JOURNALD_AVAILABLE:
-    from systemd import journal
+    import journald_send
+    from journald_send import Priority
 
-    LEVEL_TO_PRIORITY: dict[str, int] = {
-        'DEBUG': journal.LOG_DEBUG,
-        'INFO': journal.LOG_INFO,
-        'WARNING': journal.LOG_WARNING,
-        'ERROR': journal.LOG_ERR,
-        'EXCEPTION': journal.LOG_ERR,
-        'CRITICAL': journal.LOG_CRIT,
-        'NOTICE': journal.LOG_NOTICE,
-        'TRACE': journal.LOG_DEBUG,
-        'NOTSET': journal.LOG_INFO,
-        # Other method names will be mapped to 'info' level.
+    LEVEL_TO_PRIORITY = {
+        'DEBUG': Priority.DEBUG,
+        'INFO': Priority.INFO,
+        'WARNING': Priority.WARNING,
+        'ERROR': Priority.ERROR,
+        'EXCEPTION': Priority.ERROR,
+        'CRITICAL': Priority.CRITICAL,
+        'NOTICE': Priority.NOTICE,
+        'TRACE': Priority.DEBUG,
+        'NOTSET': Priority.INFO,
     }
 
-    def send_to_standard_journal(message: str, priority: int, **extra_fields: object) -> None:
-        journal.send(message, PRIORITY=priority, **extra_fields)
+    DEFAULT_PRIORITY = Priority.INFO
+
+    def send_to_standard_journal(
+        message: str,
+        priority: Priority | None = None,
+        code_file: str | None = None,
+        code_line: int | None = None,
+        code_func: str | None = None,
+        **kwargs: object,
+    ) -> None:
+        """Send a message to journald using journald_send.send."""
+        journald_send.send(
+            message, priority=priority, code_file=code_file, code_line=code_line, code_func=code_func, **kwargs
+        )
 
 else:
-    # No-op functions when systemd-python is not available
-    LEVEL_TO_PRIORITY: dict[str, int] = {}  # type: ignore[no-redef]
-
-    def send_to_standard_journal(message: str, priority: int, **extra_fields: object) -> None:  # type: ignore[unused-arg]
+    # No-op functions when journald-send is not available
+    def send_to_standard_journal(
+        message: str,
+        priority: int | None = None,
+        code_file: str | None = None,
+        code_line: int | None = None,
+        code_func: str | None = None,
+    ) -> None:  # type: ignore[misc]
+        """No-op function when journald_send is not available."""
         pass
 
 
@@ -110,42 +129,43 @@ class JournaldHandler(Handler):
         # Get the message
         message = record.message
 
-        # Convert level name to journald priority
-        priority = LEVEL_TO_PRIORITY.get(record.level_name, journal.LOG_INFO)
+        # Append exception to message if present
+        if record.exc_info:
+            if formatted_exception := record.formatted_exception:
+                message = f'{message}\n{formatted_exception}'
 
-        # Prepare extra fields for journald
-        extra_fields = {
+        # Convert level name to journald priority
+        try:
+            priority = Priority(LEVEL_TO_PRIORITY[record.level_name])
+        except (KeyError, ValueError):
+            priority = DEFAULT_PRIORITY
+
+        # Send to journald
+        kwargs: dict[str, object] = {
             'LOGGER': record.channel.rsplit('.', 1)[-1] if record.channel else '',
-            'CODE_FILE': record.filename or 'example.py',
-            'CODE_LINE': record.lineno or 0,
-            'CODE_FUNC': record.func_name or 'main',
             'THREAD_NAME': record.thread_name or 'main',
             'PROCESS_NAME': record.process_name or 'python',
             'MODULE': record.module or '__main__',
             'LEVEL': record.level_name,
             # Do not send `TIMESTAMP` because journald tracks the time itself.
         }
-        # Add syslog identifier if provided
         if self.syslog_identifier:
-            extra_fields['SYSLOG_IDENTIFIER'] = self.syslog_identifier
-
+            kwargs['SYSLOG_IDENTIFIER'] = self.syslog_identifier
         if record.exc_info:
-            # Though we send to `EXCEPTION_TEXT` field, it does not show up in normal view,
-            # so we append to message as well.
             if formatted_exception := record.formatted_exception:
-                message = f'{message}\n{formatted_exception}'
-                extra_fields['EXCEPTION_TEXT'] = formatted_exception
-
-        # Add extra fields from log record if any
-        # record.extra is a defaultdict, so we need to check if it has actual values
-        if record.extra and len(record.extra) > 0:
+                kwargs['EXCEPTION_TEXT'] = formatted_exception
+        # Add extra fields from log record
+        if record.extra:
             for key, value in record.extra.items():
-                # Prefix extra fields to avoid conflicts with standard fields
-                # The whole field name will be uppercased to match `journald` requirement.
-                extra_fields[f'{self.extra_field_prefix}{key}'.upper()] = value
-
-        # Send to journald
-        send_to_standard_journal(message, priority, **extra_fields)
+                kwargs[f'{self.extra_field_prefix}{key}'.upper()] = value
+        send_to_standard_journal(
+            message,
+            priority,
+            code_file=record.filename or 'example.py',
+            code_line=record.lineno or 0,
+            code_func=record.func_name or 'main',
+            **kwargs,
+        )
 
 
 __all__ = ('JournaldHandler',)
