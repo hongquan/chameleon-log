@@ -18,7 +18,7 @@ The :py:class:`~chameleon_log.journald.JournaldHandler` is only available when t
 
 .. note::
 
-    The ``journald`` extra requires Linux with systemd and installs the ``systemd-python`` package.
+    The ``journald`` extra requires Linux with systemd and installs the ``journald-send`` package.
 
 Other than storing logs as structured data, preserve the context around a log message, `journald`_ also allows to attach metadata to enable powerful filtering.
 This is especially useful in multi-tenant systems where logs from many tenants mix together.

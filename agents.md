@@ -61,7 +61,7 @@ uv run sphinx-build -W --keep-going -b html docs docs/_build/html
 cd docs && make livehtml
 ```
 
-**Note**: Building documentation requires the `--all-extras` flag to ensure the `journald` module is available for autodoc generation, even though it uses a no-op implementation if systemd-python is not installed.
+**Note**: Building documentation requires the `--all-extras` flag to ensure the `journald` module is available for autodoc generation, even though it uses a no-op implementation if journald-send is not installed.
 
 ### Linting & Formatting
 

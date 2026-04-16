@@ -44,9 +44,9 @@ Or using uv:
 
     uv add chameleon_log --extra journald
 
-This will also install the `systemd-python`_ package, requiring systemd-based Linux distros.
+This will also install the `journald-send`_ package, requiring systemd-based Linux distros.
 
-.. _systemd-python: https://pypi.org/project/systemd-python/
+.. _journald-send: https://pypi.org/project/journald-send/
 
 📂 Contents
 ============

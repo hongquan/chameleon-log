@@ -20,7 +20,7 @@ This directory contains examples demonstrating how to use ChameleonLog with diff
 
 These examples demonstrate using JournaldHandler to send logs to systemd journal.
 
-**Note**: These examples require Linux with systemd and the `systemd-python` package installed.
+**Note**: These examples require Linux with systemd and the `journald-send` package installed.
 
 #### journald-simple.py
 
@@ -74,10 +74,10 @@ journalctl -t farm-controller -o json | jq .
 
 ### Installation for Journald Examples
 
-The journald examples require the `systemd-python` package. Install it with:
+The journald examples require the `journald-send` package. Install it with:
 
 ```bash
-pip install systemd-python
+pip install journald-send
 # or
 pip install chameleon_log[journald]
 ```

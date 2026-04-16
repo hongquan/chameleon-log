@@ -68,7 +68,7 @@ Or using uv:
 
     uv add chameleon_log --extra journald
 
-This will also install the `systemd-python`_ package, requiring systemd-based Linux distros.
+This will also install the `journald-send`_ package, requiring systemd-based Linux distros.
 
 🚀 Usage
 =========
@@ -225,6 +225,6 @@ Logo by `Freepik <https://www.freepik.com>`_.
 .. _Rich: https://pypi.org/project/rich/
 .. _systemd: https://systemd.io/
 .. _journald: https://wiki.archlinux.org/title/Systemd/Journal
-.. _systemd-python: https://pypi.org/project/systemd-python/
+.. _journald-send: https://pypi.org/project/journald-send/
 .. _LICENSE: https://github.com/hongquan/chameleon-log/blob/master/LICENSE
 .. _logbook-stubs-source: https://github.com/hongquan/logbook-stubs
