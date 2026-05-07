@@ -1,4 +1,10 @@
 import os
+from typing import TYPE_CHECKING
+
+
+if TYPE_CHECKING:
+    from .journald import JournaldHandler
+    from .rich import RichHandler
 
 
 def is_connected_journald() -> bool:
@@ -39,3 +45,32 @@ def is_connected_journald() -> bool:
     if not journal_stream:
         return False
     return not os.getenv('TERM')
+
+
+def get_log_handler(level: int | str = 0, syslog_identifier: str | None = None) -> JournaldHandler | RichHandler:
+    """
+    Get the appropriate log handler based on the runtime environment.
+
+    Automatically selects between JournaldHandler (for systemd journal) and
+    RichHandler (for terminal output) based on whether the process is connected
+    to journald.
+
+    :param level: Log level filter (default: 0)
+    :type level: int | str
+    :param syslog_identifier: Optional syslog identifier for journald (default: None)
+    :type syslog_identifier: str | None
+    :return: JournaldHandler if connected to journald, otherwise RichHandler
+    :rtype: JournaldHandler | RichHandler
+    """
+    if is_connected_journald():
+        from .journald import JournaldHandler
+
+        return JournaldHandler(level=level, syslog_identifier=syslog_identifier)
+
+    # If PYTEST_CURRENT_TEST is set, disable Rich's rendering to avoid issues
+    # with pytest's output capturing.
+    # Otherwise, let RichHandler automatically decide.
+    from .rich import RichHandler
+
+    rich_rendering = False if 'PYTEST_CURRENT_TEST' in os.environ else None
+    return RichHandler(level=level, rich_rendering=rich_rendering)

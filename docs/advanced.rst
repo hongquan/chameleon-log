@@ -125,6 +125,22 @@ Each handler is only suitable for a running environment, you can implement the f
         logger.info('Application started')
 
 
+Quick handler selection with get_log_handler
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For a more concise approach, use the :py:func:`~chameleon_log.detectors.get_log_handler` function which automatically selects the appropriate handler:
+
+.. code-block:: python
+
+    from chameleon_log import get_log_handler
+
+    handler = get_log_handler(syslog_identifier='my-service')
+
+    with handler:
+        logger = logbook.Logger(__name__)
+        logger.info('Application started')
+
+
 Complete auto-detection example
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

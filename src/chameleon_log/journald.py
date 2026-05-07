@@ -18,6 +18,7 @@ but will be a no-op handler that does nothing.
 from __future__ import annotations
 
 import importlib.util
+import warnings
 from typing import TYPE_CHECKING
 
 from logbook.handlers import Handler
@@ -30,6 +31,16 @@ if TYPE_CHECKING:
 
 # Check if journald-send is available
 _JOURNALD_AVAILABLE = importlib.util.find_spec('journald_send') is not None
+
+if not _JOURNALD_AVAILABLE:
+    warnings.warn(
+        'The journald_send package is not installed. '
+        'The JournaldHandler will not forward logs to journald. '
+        'To enable journald support, install the journald extra: '
+        'pip install chameleon_log[journald]',
+        UserWarning,
+        stacklevel=2,
+    )
 
 LEVEL_TO_PRIORITY: dict[str, int] = {}
 

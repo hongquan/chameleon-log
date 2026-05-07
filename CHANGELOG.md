@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.0] - 2026-05-07
+
+### Added
+
+- Add ``get_log_handler()`` function for convenient automatic handler selection.
+- Add warning when ``journald_send`` is not installed.
+
 ## [1.8.0] - 2026-04-16
 
 ### Changed
@@ -98,6 +105,7 @@
 - Legacy release (project was rewritten for v1.0.0)
 
 
+[1.9.0]: https://github.com/hongquan/chameleon-log/releases/tag/v1.9.0
 [1.8.0]: https://github.com/hongquan/chameleon-log/releases/tag/v1.8.0
 [1.6.0]: https://github.com/hongquan/chameleon-log/releases/tag/v1.6.0
 [1.5.0]: https://github.com/hongquan/chameleon-log/releases/tag/v1.5.0
