@@ -5,6 +5,8 @@ from typing import TYPE_CHECKING
 
 
 if TYPE_CHECKING:
+    from logbook import LogLevel
+
     from .journald import JournaldHandler
     from .rich import RichHandler
 
@@ -49,7 +51,7 @@ def is_connected_journald() -> bool:
     return not os.getenv('TERM')
 
 
-def get_log_handler(level: int | str = 0, syslog_identifier: str | None = None) -> JournaldHandler | RichHandler:
+def get_log_handler(level: LogLevel = 0, syslog_identifier: str | None = None) -> JournaldHandler | RichHandler:
     """
     Get the appropriate log handler based on the runtime environment.
 
@@ -58,7 +60,7 @@ def get_log_handler(level: int | str = 0, syslog_identifier: str | None = None) 
     to journald.
 
     :param level: Log level filter (default: 0)
-    :type level: int | str
+    :type level: LogLevel
     :param syslog_identifier: Optional syslog identifier for journald (default: None)
     :type syslog_identifier: str | None
     :return: JournaldHandler if connected to journald, otherwise RichHandler
