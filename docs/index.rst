@@ -21,13 +21,13 @@ Install ChameleonLog using ``pip``:
 
 .. code-block:: bash
 
-    pip install chameleon_log
+    pip install chameleon-log
 
 Or using ``uv``:
 
 .. code-block:: bash
 
-    uv add chameleon_log
+    uv add chameleon-log
 
 🔧 Optional Dependencies
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -36,13 +36,13 @@ To use the :py:class:`~chameleon_log.journald.JournaldHandler` for sending logs 
 
 .. code-block:: bash
 
-    pip install chameleon_log[journald]
+    pip install chameleon-log[journald]
 
 Or using uv:
 
 .. code-block:: bash
 
-    uv add chameleon_log --extra journald
+    uv add chameleon-log --extra journald
 
 This will also install the `journald-send`_ package, requiring systemd-based Linux distros.
 
