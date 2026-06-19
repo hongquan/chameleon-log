@@ -72,7 +72,6 @@ The ``RichHandler`` can be customized for different use cases:
     handler = RichHandler(
         level=logbook.DEBUG,           # Set minimum log level
         enable_link_path=True,         # Enable clickable file paths in terminals
-        rich_rendering=True            # Always use Rich colorful rendering
     )
 
     with handler:
@@ -83,11 +82,11 @@ The ``RichHandler`` can be customized for different use cases:
 The handler supports all `Logbook`_ log levels and provides formatted exception tracebacks with syntax highlighting.
 
 Sometimes, the application's ``stderr`` is connected to something not a Terminal, so it does not make sense to render the colors, table layout.
-The ``rich_rendering`` parameter allows you to disable / enable that feature:
+The ``console`` parameter allows you to control that behavior:
 
-- ``True``: Always use Rich colorful rendering.
+- ``True`` (default): Auto-detect based on ``isatty()``. Use Rich rendering when the stream is a terminal.
 - ``False``: Disable Rich formatting, render plain output.
-- ``None`` (default): Auto-detect based on ``isatty()``.
+- A ``rich.Console`` instance: Use that Console directly. This is useful for sinking log output into an active Rich live display (e.g. a ``rich.progress.Progress`` bar).
 
 Additionally, the handler exposes a ``rich_tracebacks`` flag to control how exceptions are displayed:
 
@@ -98,7 +97,7 @@ Example enabling rich tracebacks::
 
     from chameleon_log import RichHandler
 
-    handler = RichHandler(rich_tracebacks=True, rich_rendering=True)
+    handler = RichHandler(rich_tracebacks=True, console=True)
 
 See the examples in the ``examples/`` directory for runnable demos that show both behaviors.
 

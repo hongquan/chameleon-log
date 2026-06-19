@@ -10,7 +10,7 @@ authors = [
 requires-python = ">=3.12"
 dependencies = [
     "logbook>=1.9.2",
-    "rich>=14.3.3",
+    "rich>=15.0.0",
 ]
 dynamic = ["version"]
 keywords = ["logging", "logbook", "rich", "journald"]
@@ -44,21 +44,21 @@ build-backend = "hatchling.build"
 [dependency-groups]
 test = [
     "logbook-stubs>=0.3.0",
-    "pytest>=9.0.2",
+    "pytest>=9.1.0",
     "pytest-mock",
 ]
 lint = [
-    "ruff>=0.15.10",
+    "ruff>=0.15.18",
 ]
 dev = [
-    "pre-commit>=4.5.1",
+    "pre-commit>=4.6.0",
 ]
 docs = [
     "sphinx-autobuild>=2025.8.25",
     "sphinx>=9.1.0",
     "sphinx-book-theme>=1.2.0",
-    "myst-parser>=5.0.0",
-    "sphinxcontrib-asciinema>=0.4.2",
+    "myst-parser>=5.1.0",
+    "sphinxcontrib-asciinema>=0.4.3",
 ]
 
 [tool.hatch.version]

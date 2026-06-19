@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.0] - 2026-06-19
+
+### Changed
+
+- Consolidate Rich handler controls into a single ``console`` parameter: ``True`` (auto-detect TTY), ``False`` (plain output), or a ``rich.Console`` instance for shared output (e.g. with a Rich progress bar).
+- Remove ``rich_rendering`` parameter from ``RichHandler``.
+
 ## [1.9.0] - 2026-05-07
 
 ### Added
@@ -105,6 +112,7 @@
 - Legacy release (project was rewritten for v1.0.0)
 
 
+[2.0.0]: https://github.com/hongquan/chameleon-log/releases/tag/v2.0.0
 [1.9.0]: https://github.com/hongquan/chameleon-log/releases/tag/v1.9.0
 [1.8.0]: https://github.com/hongquan/chameleon-log/releases/tag/v1.8.0
 [1.6.0]: https://github.com/hongquan/chameleon-log/releases/tag/v1.6.0

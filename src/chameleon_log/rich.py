@@ -11,6 +11,7 @@ from logbook.base import (
     LogRecord,
 )
 from logbook.handlers import StreamHandler
+from rich import get_console
 from rich.console import Console, ConsoleRenderable
 from rich.highlighter import ReprHighlighter
 from rich.text import Text
@@ -42,23 +43,22 @@ class RichHandler(StreamHandler):
     disables colors/formatting when redirecting to files or non-TTY streams.
 
     :param level: Log level filter (default: ``NOTSET``)
-    :type level: LogLevel
     :param filter: Optional log filter function (default: ``None``)
-    :type filter: LogFilter | None
     :param bubble: Whether to bubble logs to parent handlers (default: ``False``)
-    :type bubble: bool
     :param stream: Output stream (default: ``sys.stderr``)
-    :type stream: IO[str] | None
     :param enable_link_path: Enable clickable file paths in terminal (default: ``True``)
-    :type enable_link_path: bool
     :param rich_tracebacks: Render exceptions with Rich tracebacks instead of appending plain traceback text.
         Default: ``False``.
-    :type rich_tracebacks: bool
-    :param rich_rendering: Control Rich rendering mode (default: ``None``)
-        - ``True``: Always use Rich colorful rendering
-        - ``False``: Disable Rich formatting, render plain output
-        - ``None``: Auto-detect based on ``isatty()``
-    :type rich_rendering: bool | None
+    :param console: Control Rich rendering and the ``rich.Console`` used for output.
+
+        - ``True`` (default): Auto-detect whether the stream is a terminal (via ``isatty()``).
+          If it is, use Rich's global console (via :func:`rich.get_console`); otherwise,
+          fall back to plain output.
+        - ``False``: Disable Rich formatting entirely; render plain output.
+        - A ``rich.Console`` instance: Use that Console directly. This is useful for
+          sinking log output into an active Rich live display (e.g. a
+          :class:`~rich.progress.Progress` bar) so that log lines do not break the
+          progress display.
 
     Example usage::
 
@@ -82,10 +82,10 @@ class RichHandler(StreamHandler):
         filter: LogFilter | None = None,
         bubble: bool = False,
         *,
+        console: Console | bool = True,
         stream: IO[str] | None = None,
         enable_link_path: bool = True,
         rich_tracebacks: bool = False,
-        rich_rendering: bool | None = None,
     ) -> None:
         super().__init__(
             stream=stream if stream is not None else sys.stderr,
@@ -93,8 +93,8 @@ class RichHandler(StreamHandler):
             filter=filter,
             bubble=bubble,
         )
-        self.rich_rendering: bool | None = rich_rendering
-        self._console: Console | None = None
+        self._console_arg: Console | bool = console
+        self._console: Console | None = console if isinstance(console, Console) else None
         self.highlighter = ReprHighlighter()
         self.log_render = LogRender(
             show_time=True,
@@ -122,12 +122,11 @@ class RichHandler(StreamHandler):
         self.keywords = tuple(HTTPMethod)
 
     def use_terminal_rendering(self) -> bool:
-        if self.rich_rendering is True:
-            return True
-
-        if self.rich_rendering is False:
+        if self._console_arg is False:
             return False
-
+        if isinstance(self._console_arg, Console):
+            return True
+        # console is True → auto-detect
         isatty = getattr(self.stream, 'isatty', None)
         if not callable(isatty):
             return False
@@ -140,14 +139,12 @@ class RichHandler(StreamHandler):
 
     @property
     def console(self) -> Console | None:
-        if self._console is None and self.use_terminal_rendering():
-            self._console = Console(
-                file=self.stream,
-                force_terminal=self.rich_rendering is True,
-                color_system='standard',
-                highlight=True,
-            )
-        return self._console
+        if self._console is not None:
+            return self._console
+        if self.use_terminal_rendering():
+            self._console = get_console()
+            return self._console
+        return None
 
     def emit(self, record: LogRecord) -> None:
         message = self.format(record)
@@ -217,9 +214,7 @@ class RichHandler(StreamHandler):
         """Render message text in to ``Text``.
 
         :param record: logbook ``Record``.
-        :type record: LogRecord
         :param message: String containing log message.
-        :type message: str
         :return: Renderable to display log message.
         """
         use_markup = getattr(record, 'markup', self.use_markup)
@@ -245,9 +240,7 @@ class RichHandler(StreamHandler):
         """Render log for display.
 
         :param record: logbook ``Record``.
-        :type record: LogRecord
         :param renderables: Renderables to display in the log row and continuation row.
-        :type renderables: Iterable[ConsoleRenderable]
         :return: Renderable to display log.
         """
         path = Path(record.filename or '/opt').name
@@ -268,7 +261,6 @@ class RichHandler(StreamHandler):
         """Get the level name from the record as a styled ``Text`` object.
 
         :param record: logbook ``Record``.
-        :type record: LogRecord
         :return: A ``Text`` instance containing the level name with appropriate styling.
         """
         level_name = record.level_name

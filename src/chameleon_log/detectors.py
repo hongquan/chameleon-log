@@ -76,5 +76,5 @@ def get_log_handler(level: LogLevel = 0, syslog_identifier: str | None = None) -
     # Otherwise, let RichHandler automatically decide.
     from .rich import RichHandler
 
-    rich_rendering = False if 'PYTEST_CURRENT_TEST' in os.environ else None
-    return RichHandler(level=level, rich_rendering=rich_rendering)
+    console = False if 'PYTEST_CURRENT_TEST' in os.environ else True
+    return RichHandler(level=level, console=console)

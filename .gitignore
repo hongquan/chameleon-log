@@ -134,3 +134,5 @@ dmypy.json
 .pyre/
 
 examples/*.service
+
+*.local.md

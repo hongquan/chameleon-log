@@ -93,11 +93,11 @@ For development and debugging in terminal environments, use ``RichHandler`` for 
         logger.warning('This is a warning message')
         logger.error('An error occurred')
 
-The ``rich_rendering`` parameter controls Rich formatting:
+The ``console`` parameter controls Rich formatting:
 
-- ``True``: Always use Rich colorful rendering
-- ``False``: Disable Rich formatting, render plain output
-- ``None`` (default): Auto-detect based on ``isatty()``
+- ``True`` (default): Auto-detect based on ``isatty()``. Use Rich rendering when the stream is a terminal.
+- ``False``: Disable Rich formatting, render plain output.
+- A ``rich.Console`` instance: Use that Console directly. This is useful for sinking log output into an active Rich live display (e.g. a ``rich.progress.Progress`` bar).
 
 Additionally, ``RichHandler`` accepts a ``rich_tracebacks`` boolean to control how exceptions are rendered:
 
