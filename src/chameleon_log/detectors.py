@@ -60,11 +60,8 @@ def get_log_handler(level: LogLevel = 0, syslog_identifier: str | None = None) -
     to journald.
 
     :param level: Log level filter (default: 0)
-    :type level: LogLevel
     :param syslog_identifier: Optional syslog identifier for journald (default: None)
-    :type syslog_identifier: str | None
     :return: JournaldHandler if connected to journald, otherwise RichHandler
-    :rtype: JournaldHandler | RichHandler
     """
     if is_connected_journald():
         from .journald import JournaldHandler

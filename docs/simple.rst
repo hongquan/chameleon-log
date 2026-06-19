@@ -59,7 +59,7 @@ For a demo that shows Rich-formatted tracebacks, run:
 
 .. note::
 
-    JournaldHandler requires Linux with `systemd`_. Install with: ``pip install chameleon_log[journald]``
+    JournaldHandler requires Linux with `systemd`_. Install with: ``pip install chameleon-log[journald]``
 
 The :py:class:`~chameleon_log.journald.JournaldHandler` writes logs directly to `systemd`_ `journald`_ for **production/live systems**, with full metadata preservation.
 

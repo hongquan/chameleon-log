@@ -105,15 +105,10 @@ class JournaldHandler(Handler):
     (does nothing) but remains available to prevent import errors.
 
     :param level: Log level filter (default: 0)
-    :type level: ``int`` | ``str``
     :param filter: Optional log filter function (default: ``None``)
-    :type filter: LogFilter | ``None``
-    :param bubble: Whether to bubble logs to parent handlers (default: ``False``)
-    :type bubble: ``bool``
+    :param bubble: Continue dispatching to subsequent handlers (default: ``False``)
     :param syslog_identifier: Optional syslog identifier for the logs (default: ``None``)
-    :type syslog_identifier: ``str`` | ``None``
     :param extra_field_prefix: Prefix for extra fields (default: ``f_``). Will be automatically uppercased.
-    :type extra_field_prefix: ``str``
 
     .. _Logbook: https://logbook.readthedocs.io/
     .. _journald: https://www.freedesktop.org/software/systemd/man/systemd-journald.service.html

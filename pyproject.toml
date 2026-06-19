@@ -31,6 +31,9 @@ classifiers = [
 journald = [
   "journald-send >= 0.3.0; sys_platform == 'linux'",
 ]
+sentry = [
+  "sentry-sdk >= 2.67.1"
+]
 
 [project.urls]
 Repository = "https://github.com/hongquan/chameleon-log.git"

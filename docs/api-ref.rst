@@ -9,6 +9,14 @@ Rich-powered handler
    :undoc-members:
    :show-inheritance:
 
+Sentry handler
+--------------
+
+.. automodule:: chameleon_log.sentry
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Journald integration
 --------------------
 
