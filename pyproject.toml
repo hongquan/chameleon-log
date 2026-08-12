@@ -96,6 +96,7 @@ exclude = [
     "node_modules",
     "venv",
     "*/static/CACHE/*",
+    "**/*.md",
 ]
 
 [tool.ruff.lint]
