@@ -21,7 +21,6 @@ from logbook.handlers import Handler
 
 if TYPE_CHECKING:
     from logbook.base import LogRecord
-    from logbook.handlers import LogFilter
 
 
 # Check if sentry-sdk is available
@@ -111,14 +110,6 @@ class SentryHandler(Handler):
     .. _Logbook: https://logbook.readthedocs.io/
     .. _Sentry: https://docs.sentry.io/
     """
-
-    def __init__(
-        self,
-        level: int | str = 0,
-        filter: LogFilter | None = None,
-        bubble: bool = False,
-    ) -> None:
-        super().__init__(level=level, filter=filter, bubble=bubble)
 
     # Follow sentry_sdk.integrations.logging.EventHandler.
     def emit(self, record: LogRecord) -> None:

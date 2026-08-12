@@ -123,5 +123,64 @@ When using :py:class:`~chameleon_log.journald.JournaldHandler`, view and filter 
 
 The ``syslog_identifier`` is helpful when your app runs across multiple systemd units, allowing you to use ``journalctl -t`` to view all logs from your application.
 
+🔴 SentryHandler
+-----------------
+
+The :py:class:`~chameleon_log.sentry.SentryHandler` forwards Logbook records to `Sentry`_ for error tracking and monitoring.
+Install it with the ``sentry`` extra:
+
+.. code-block:: bash
+
+    pip install chameleon-log[sentry]
+    # or with uv:
+    uv add chameleon-log --extra sentry
+
+Initialize Sentry and attach the handler:
+
+.. code-block:: python
+
+    import logbook
+    import sentry_sdk
+    from chameleon_log.sentry import SentryHandler
+
+    sentry_sdk.init(dsn='https://...@sentry.io/123')
+    logger = logbook.Logger('myapp')
+    handler = SentryHandler(level=logbook.ERROR)
+
+    with handler:
+        logger.error('Database connection failed')
+
+Exception-aware forwarding
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+When a record carries an exception (:exc:`exc_info=True`), the event is sent with a stacktrace.
+Plain records (no exception) become events with the formatted message, channel, and ``extra`` fields attached.
+
+Combined with journald
+~~~~~~~~~~~~~~~~~~~~~~
+
+Use ``SentryHandler`` alongside ``JournaldHandler`` — filter ``SentryHandler`` to WARNING+ so only meaningful events reach Sentry while local logs stay verbose:
+
+.. code-block:: python
+
+    from chameleon_log import RichHandler
+    from chameleon_log.journald import JournaldHandler
+    from chameleon_log.sentry import SentryHandler
+
+    handlers = [
+        RichHandler(),
+        journald_handler := JournaldHandler(syslog_identifier='my-service'),
+        SentryHandler(level=logbook.WARNING),  # Only warnings and above go to Sentry
+    ]
+
+    with *handlers:
+        ...
+
+.. figure:: https://quan-images.b-cdn.net/blogs/2026/08/logbook-sentry.png
+   :alt: Sentry dashboard showing multiple events captured from Logbook records
+
+   Multiple events captured by ``SentryHandler`` as shown in the Sentry dashboard
+
 .. _journald: https://wiki.archlinux.org/title/Systemd/Journal
 .. _Logbook: https://pypi.org/project/Logbook/
+.. _Sentry: https://docs.sentry.io/
