@@ -1,106 +1,105 @@
-#:tombi schema.strict = false
-
 [project]
 name = "chameleon-log"
 description = "Colourful handlers for Logbook, based on Rich and Journald."
 readme = "README.rst"
-authors = [
-    { name = "Nguyễn Hồng Quân", email = "ng.hong.quan@gmail.com" }
-]
 requires-python = ">=3.12"
+license = "Apache-2.0"
+authors = [{ name = "Nguyễn Hồng Quân", email = "ng.hong.quan@gmail.com" }]
+keywords = ["journald", "logbook", "logging", "rich", "sentry"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: Apache Software License",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+]
 dependencies = [
-    "logbook>=1.9.2",
-    "rich>=15.0.0",
+  "logbook>=1.9.2",
+  "rich>=15.0.0",
 ]
 dynamic = ["version"]
-keywords = ["logging", "logbook", "rich", "journald"]
-license = "Apache-2.0"
-classifiers = [
-    "Development Status :: 4 - Beta",
-    "Intended Audience :: Developers",
-    "License :: OSI Approved :: Apache Software License",
-    "Programming Language :: Python",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
-    "Programming Language :: Python :: 3.14",
-    "Topic :: Software Development :: Libraries :: Python Modules",
-]
+
+[project.urls]
+Changelog = "https://github.com/hongquan/chameleon-log/blob/main/CHANGELOG.md"
+Documentation = "https://chameleon-log.readthedocs.io"
+Repository = "https://github.com/hongquan/chameleon-log.git"
 
 [project.optional-dependencies]
 journald = [
   "journald-send >= 0.3.0; sys_platform == 'linux'",
 ]
-sentry = [
-  "sentry-sdk >= 2.67.1"
-]
+sentry = ["sentry-sdk >= 2.67.1"]
 
-[project.urls]
-Repository = "https://github.com/hongquan/chameleon-log.git"
-Documentation = "https://chameleon-log.readthedocs.io"
-Changelog = "https://github.com/hongquan/chameleon-log/blob/main/CHANGELOG.md"
+[dependency-groups]
+dev = [
+  "pre-commit>=4.6.2",
+]
+docs = [
+  "myst-parser>=5.1.0",
+  "sphinx>=9.1.0",
+  "sphinx-autobuild>=2025.8.25",
+  "sphinx-book-theme>=1.4.0",
+  "sphinxcontrib-asciinema>=0.4.3",
+]
+lint = [
+  "ruff>=0.16.2",
+]
+test = [
+  "logbook-stubs>=0.3.0",
+  "pytest>=9.1.1",
+  "pytest-mock",
+]
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
-[dependency-groups]
-test = [
-    "logbook-stubs>=0.3.0",
-    "pytest>=9.1.1",
-    "pytest-mock",
-]
-lint = [
-    "ruff>=0.16.2",
-]
-dev = [
-    "pre-commit>=4.6.2",
-]
-docs = [
-    "sphinx-autobuild>=2025.8.25",
-    "sphinx>=9.1.0",
-    "sphinx-book-theme>=1.4.0",
-    "myst-parser>=5.1.0",
-    "sphinxcontrib-asciinema>=0.4.3",
-]
-
 [tool.hatch.version]
-path = 'src/chameleon_log/__init__.py'
-
+path = "src/chameleon_log/__init__.py"
 
 [[tool.mypy.overrides]]
 module = ["systemd"]
 ignore_missing_imports = true
 
+[tool.pyrefly]
+project-includes = [
+  "**/*.py*",
+  "**/*.ipynb",
+]
+
 [tool.ruff]
 line-length = 120
 exclude = [
-    ".bzr",
-    ".direnv",
-    ".eggs",
-    ".git",
-    ".hg",
-    ".mypy_cache",
-    ".nox",
-    ".pants.d",
-    ".pytype",
-    ".ruff_cache",
-    ".svn",
-    ".tox",
-    ".venv",
-    "__pypackages__",
-    "_build",
-    "buck-out",
-    "build",
-    "dist",
-    "node_modules",
-    "venv",
-    "*/static/CACHE/*",
-    "**/*.md",
+  ".bzr",
+  ".direnv",
+  ".eggs",
+  ".git",
+  ".hg",
+  ".mypy_cache",
+  ".nox",
+  ".pants.d",
+  ".pytype",
+  ".ruff_cache",
+  ".svn",
+  ".tox",
+  ".venv",
+  "__pypackages__",
+  "_build",
+  "buck-out",
+  "build",
+  "dist",
+  "node_modules",
+  "venv",
+  "*/static/CACHE/*",
+  "**/*.md",
 ]
 
 [tool.ruff.lint]
-select = ['E4', 'E7', 'E9', 'F', 'I', 'BLE001', 'ANN']
+select = ["E4", "E7", "E9", "F", "I", "BLE001", "ANN"]
 
 [tool.ruff.lint.isort]
 combine-as-imports = true
@@ -111,9 +110,3 @@ quote-style = "single"
 
 [tool.ty.src]
 exclude = ["src/chameleon_log/legacy.py"]
-
-[tool.pyrefly]
-project-includes = [
-    "**/*.py*",
-    "**/*.ipynb",
-]

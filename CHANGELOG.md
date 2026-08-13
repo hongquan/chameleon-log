@@ -1,5 +1,11 @@
 # Changelog
 
+## [3.0.0] - 2026-08-13
+
+### Added
+
+- Add ``SentryHandler`` for forwarding Logbook records to Sentry for error tracking and monitoring.
+
 ## [2.0.0] - 2026-06-19
 
 ### Changed
@@ -112,6 +118,7 @@
 - Legacy release (project was rewritten for v1.0.0)
 
 
+[3.0.0]: https://github.com/hongquan/chameleon-log/releases/tag/v3.0.0
 [2.0.0]: https://github.com/hongquan/chameleon-log/releases/tag/v2.0.0
 [1.9.0]: https://github.com/hongquan/chameleon-log/releases/tag/v1.9.0
 [1.8.0]: https://github.com/hongquan/chameleon-log/releases/tag/v1.8.0
