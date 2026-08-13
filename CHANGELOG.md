@@ -1,5 +1,11 @@
 # Changelog
 
+## [3.2.0] - 2026-08-13
+
+### Added
+
+- Forward Logbook source location (file, line, function) to Sentry events.
+
 ## [3.1.0] - 2026-08-13
 
 ### Changed
@@ -124,6 +130,7 @@
 - Legacy release (project was rewritten for v1.0.0)
 
 
+[3.2.0]: https://github.com/hongquan/chameleon-log/releases/tag/v3.2.0
 [3.1.0]: https://github.com/hongquan/chameleon-log/releases/tag/v3.1.0
 [3.0.0]: https://github.com/hongquan/chameleon-log/releases/tag/v3.0.0
 [2.0.0]: https://github.com/hongquan/chameleon-log/releases/tag/v2.0.0
