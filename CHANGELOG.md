@@ -1,5 +1,11 @@
 # Changelog
 
+## [3.1.0] - 2026-08-13
+
+### Changed
+
+- Make `WARNING` as default level for `SentryHandler`.
+
 ## [3.0.0] - 2026-08-13
 
 ### Added
@@ -118,6 +124,7 @@
 - Legacy release (project was rewritten for v1.0.0)
 
 
+[3.1.0]: https://github.com/hongquan/chameleon-log/releases/tag/v3.1.0
 [3.0.0]: https://github.com/hongquan/chameleon-log/releases/tag/v3.0.0
 [2.0.0]: https://github.com/hongquan/chameleon-log/releases/tag/v2.0.0
 [1.9.0]: https://github.com/hongquan/chameleon-log/releases/tag/v1.9.0
