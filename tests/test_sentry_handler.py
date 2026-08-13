@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import inspect
 from collections.abc import Iterator
 from typing import TYPE_CHECKING
 
@@ -157,6 +158,42 @@ def test_sentry_handler_ignores_inactive_client(
     handler = sentry_module.SentryHandler(level=logbook.INFO)
     with handler:
         logger.info('ignored')
+
+
+def _log_helper() -> None:
+    logbook.Logger('testlogger').info('captured here')  # noqa: LOG015
+
+
+def test_sentry_handler_forwards_logbook_source_location(
+    capture_events: list[dict],
+) -> None:
+    handler = sentry_module.SentryHandler(level=logbook.INFO)
+
+    with handler:
+        _log_helper()
+
+    assert len(capture_events) == 1
+    event = capture_events[0]
+    extra = event['extra']
+    helper_lines, _ = inspect.getsourcelines(_log_helper)
+    log_call_line = next(i for i, line in enumerate(helper_lines, start=1) if 'info(' in line)
+    helper_lineno = _log_helper.__code__.co_firstlineno + log_call_line - 1
+    assert extra['logbook.func_name'] == '_log_helper'
+    assert extra['logbook.module'] == __name__
+    assert isinstance(extra['logbook.lineno'], int)
+    assert extra['logbook.lineno'] == helper_lineno
+    assert extra['logbook.filename'].endswith('test_sentry_handler.py')
+    assert extra['logbook.thread'] is not None
+
+
+def test_sentry_handler_does_not_clobber_caller_extra_keys(capture_events: list[dict], logger: logbook.Logger) -> None:
+    handler = sentry_module.SentryHandler(level=logbook.INFO)
+
+    with handler:
+        logger.info('caller wins', extra={'logbook.filename': 'user-supplied'})
+
+    assert len(capture_events) == 1
+    assert capture_events[0]['extra']['logbook.filename'] == 'user-supplied'
 
 
 def test_sentry_handler_translates_logbook_levels(capture_events: list[dict], logger: logbook.Logger) -> None:

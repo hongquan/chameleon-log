@@ -142,10 +142,11 @@ class SentryHandler(Handler):
                 client_options=client_options,
                 mechanism={'type': 'logbook', 'handled': True},
             )
-        # Records without an exception (exc_info is None or not a tuple) intentionally
-        # omit a current-thread stacktrace: Logbook records already carry their own
-        # source-location data and attaching the caller's stacktrace produces noisier,
-        # redundant events in Sentry.
+        # Records without a real exception create an empty event. Logbook's
+        # at-log-time source location is forwarded through ``event['extra']``
+        # below, so we deliberately do not synthesize a current-thread
+        # ``current_stacktrace`` here: it would emit the frames at handler
+        # time, not at the original log call site, and produce noisier events.
         else:
             event = {}
             hint = {}
@@ -167,7 +168,26 @@ class SentryHandler(Handler):
             'params': record.args,
         }
 
-        extra: dict[str, object] = dict(record.extra) if record.extra is not None else {}
+        # Forward Logbook's source-location data so Sentry events are
+        # attributable to the original log call site, not the handler
+        # execution site. ``pull_information`` caches ``filename``/``lineno``/
+        # ``module``/``func_name``/``thread``/``thread_name`` on the record;
+        # without it those cached properties are lost once the record is
+        # closed (``_noned_on_close`` nones ``frame`` and ``calling_frame``
+        # on :meth:`LogRecord.close`). Caller-supplied ``extra`` updates
+        # override these in case the user wants to override ``logbook.*``.
+        record.pull_information()
+        logbook_source: dict[str, object] = {
+            'logbook.filename': record.filename,
+            'logbook.lineno': record.lineno,
+            'logbook.func_name': record.func_name,
+            'logbook.module': record.module,
+            'logbook.thread': record.thread,
+            'logbook.thread_name': record.thread_name,
+        }
+        extra: dict[str, object] = {key: value for key, value in logbook_source.items() if value is not None}
+        if record.extra is not None:
+            extra.update(record.extra)
         event['extra'] = extra
 
         sentry_sdk.capture_event(event, hint=hint)
