@@ -49,7 +49,7 @@ lint = [
   "ruff>=0.16.2",
 ]
 test = [
-  "logbook-stubs>=0.3.0",
+  "logbook-stubs>=0.4.0",
   "pytest>=9.1.1",
   "pytest-mock",
 ]

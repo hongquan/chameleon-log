@@ -129,7 +129,7 @@ def test_sentry_handler_sends_exception(capture_events: list[dict], logger: logb
     event = capture_events[0]
     assert event['exception'] is not None
     mechanism = event.get('exception', {}).get('values', [{}])[0].get('mechanism', {})
-    assert mechanism == {'type': 'logging', 'handled': True}
+    assert mechanism == {'type': 'logbook', 'handled': True}
     assert event['level'] == 'error'
     assert event['logger'] == 'testlogger'
     assert event['logentry']['formatted'] == 'failed'
