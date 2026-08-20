@@ -36,6 +36,7 @@ ChameleonLog provides colorful, structured logging for Python applications using
 
 - ``RichHandler``: Beautiful console output with syntax highlighting and tracebacks using the `Rich`_ library (recommended for *development*).
 - ``JournaldHandler``: Structured logging to `systemd`_ `journald`_ with automatic level-based coloring and filtering (recommended for *production/Live systems* on Linux).
+- ``SentryHandler``: Forwards log records to `Sentry`_ for error tracking and monitoring (requires the ``sentry`` extra).
 
 
 📦 Installation
@@ -69,6 +70,20 @@ Or using uv:
     uv add chameleon-log --extra journald
 
 This will also install the `journald-send`_ package, requiring systemd-based Linux distros.
+
+To use the ``SentryHandler`` for forwarding log records to `Sentry`_:
+
+.. code-block:: bash
+
+    pip install chameleon-log[sentry]
+
+Or using uv:
+
+.. code-block:: bash
+
+    uv add chameleon-log --extra sentry
+
+This will also install the `sentry-sdk`_ package.
 
 🚀 Usage
 =========
@@ -209,6 +224,35 @@ scatters across many systemd units, you then can use ``journalctl -t`` to view a
 
 Full documentation is available at: https://chameleon-log.readthedocs.io
 
+🎯 SentryHandler
+~~~~~~~~~~~~~~~~~
+
+For error tracking and monitoring in production environments, use ``SentryHandler`` to forward Logbook log records directly to `Sentry`_. Unlike stdlib logging integrations, this handler works with Logbook's own dispatch chain.
+
+Basic usage:
+
+.. code-block:: python
+
+    import logbook
+    import sentry_sdk
+
+    from chameleon_log.sentry import SentryHandler
+
+    sentry_sdk.init(dsn='https://your-dsn@sentry.io/project-id')
+
+    handler = SentryHandler(level=logbook.WARNING)
+
+    with handler:
+        logger = logbook.Logger(__name__)
+        logger.warning('This is a warning')
+        logger.error('An error occurred')
+
+Records carrying an exception are sent as Sentry events with a stacktrace, while ordinary records become events tagged with the Logbook channel, level, formatted message and any ``extra`` fields.
+
+.. note::
+
+    ``SentryHandler`` defaults to ``logbook.WARNING`` so routine operational noise is filtered out and only noteworthy events reach Sentry.
+
 logbook-stubs
 =============
 
@@ -226,5 +270,7 @@ Logo by `Freepik <https://www.freepik.com>`_.
 .. _systemd: https://systemd.io/
 .. _journald: https://wiki.archlinux.org/title/Systemd/Journal
 .. _journald-send: https://pypi.org/project/journald-send/
+.. _Sentry: https://docs.sentry.io/
+.. _sentry-sdk: https://pypi.org/project/sentry-sdk/
 .. _LICENSE: https://github.com/hongquan/chameleon-log/blob/master/LICENSE
 .. _logbook-stubs-source: https://github.com/hongquan/logbook-stubs
